@@ -1,14 +1,11 @@
 "use client";
 
-// Date field that opens a Material UI calendar. The date is picked from the calendar, never typed,
+// Date button that opens a Material UI calendar. The date is picked from the calendar, never typed,
 // so only real dates can be entered. It shows the date as words, e.g. "Tue, Oct 6, 2026".
 import { useRef, useState } from "react";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
-import TextField from "@mui/material/TextField";
 import CalendarMonth from "@mui/icons-material/CalendarMonth";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
@@ -27,13 +24,13 @@ interface DateFieldProps {
 export default function DateField({ label, value, onChange, className }: DateFieldProps) {
   // The field the calendar is attached to; null while the calendar is closed.
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const open = anchor !== null;
   const chosen = isValidDate(value);
 
   const close = (returnFocus: boolean) => {
     setAnchor(null);
-    if (returnFocus) inputRef.current?.focus();
+    if (returnFocus) buttonRef.current?.focus();
   };
 
   return (
@@ -49,35 +46,30 @@ export default function DateField({ label, value, onChange, className }: DateFie
           }
         }}
       >
-        <TextField
-          fullWidth
-          label={label}
-          variant="standard"
-          focused={open || undefined}
-          value={chosen ? formatDate(value) : ""}
-          placeholder="Choose a date"
-          inputRef={inputRef}
+        {/* A pill in the same style as the time wheels, with its label inline. */}
+        <button
+          ref={buttonRef}
+          type="button"
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          aria-label={chosen ? `${label}: ${formatDate(value, "long")}. Change date` : `${label}: choose a date`}
           onClick={(event) => (open ? close(false) : setAnchor(event.currentTarget))}
           onKeyDown={(event) => {
-            if (!open && (event.key === "Enter" || event.key === " " || event.key === "ArrowDown")) {
+            if (!open && event.key === "ArrowDown") {
               event.preventDefault();
               setAnchor(event.currentTarget);
             }
           }}
-          slotProps={{
-            inputLabel: { shrink: true },
-            htmlInput: { readOnly: true, "aria-haspopup": "dialog", "aria-expanded": open, className: "cursor-pointer" },
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton aria-label={chosen ? `Change date, ${formatDate(value, "long")}` : "Choose a date"} edge="end" size="small">
-                    <CalendarMonth color={open ? "primary" : "inherit"} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
+          className={`flex h-10 w-full cursor-pointer items-center gap-2 rounded-full border px-4 text-left transition-colors focus-visible:border-2 focus-visible:border-brand focus-visible:bg-brand-tint focus-visible:outline-none ${
+            open ? "border-2 border-brand bg-brand-tint" : "border-[#bdbdc2] bg-[#f2f2f4] hover:border-ink"
+          }`}
+        >
+          <span className={`text-sm font-semibold ${open ? "text-brand" : "text-ink"}`}>{label}</span>
+          <span className={`flex-1 text-base whitespace-nowrap ${chosen ? "font-semibold text-ink" : "text-[rgba(57,56,63,0.6)]"}`}>
+            {chosen ? formatDate(value) : "Choose a date"}
+          </span>
+          <CalendarMonth fontSize="small" color={open ? "primary" : "action"} />
+        </button>
         {/* Rendered next to the field (not at the end of the page) so Tab moves into it naturally. */}
         <Popper
           open={open}

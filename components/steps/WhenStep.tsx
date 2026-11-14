@@ -98,7 +98,7 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
           <div className="flex flex-wrap items-start justify-between gap-x-5 gap-y-4">
             <DateField
               label="Date"
-              className="w-[210px] max-sm:w-full sm:mt-[26px]"
+              className="w-[262px] max-sm:w-full sm:mt-10"
               value={date}
               onChange={(value) => dispatch({ type: "SET_FIELD", field: "date", value })}
             />
