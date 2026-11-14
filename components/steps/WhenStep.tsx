@@ -102,8 +102,8 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
               onChange={(value) => dispatch({ type: "SET_FIELD", field: "date", value })}
             />
             <div role="group" aria-label="Time" className="flex items-start gap-3">
-              <TimeWheel label="Hour" options={HOURS} value={hour} pageStep={3} onChange={(value) => dispatch({ type: "SET_FIELD", field: "hour", value })} />
-              <TimeWheel label="Min" options={MINUTES} value={minute} onChange={(value) => dispatch({ type: "SET_FIELD", field: "minute", value })} />
+              <TimeWheel describedBy="time-hint" label="Hour" options={HOURS} value={hour} pageStep={3} onChange={(value) => dispatch({ type: "SET_FIELD", field: "hour", value })} />
+              <TimeWheel describedBy="time-hint" label="Min" options={MINUTES} value={minute} onChange={(value) => dispatch({ type: "SET_FIELD", field: "minute", value })} />
             </div>
             <div role="group" aria-label="AM or PM" className="flex gap-3 pt-[58px]">
               {(["AM", "PM"] as Meridiem[]).map((value) => (
@@ -118,6 +118,10 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
               ))}
             </div>
           </div>
+
+          <p id="time-hint" className="-mt-3 text-[13px] text-muted">
+            Time: scroll a wheel or click a value. With the keyboard, select a wheel and type the number or use the arrow keys.
+          </p>
 
           {/* The system repeats the goal back in plain words so a wrong setting is noticed here.
               Its space is reserved so the buttons below do not move when it appears. */}

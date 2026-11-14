@@ -111,7 +111,9 @@ The screens, wording and order follow the Figma prototype. These are the differe
 - When the screen changes, focus moves to the new heading. When a search fails, focus moves to the error.
 - Errors, hints, the goal sentence and the sent confirmation are announced to screen readers (`aria-live` / `role="alert"`).
 - The date opens with Enter, Space or the down arrow, and the calendar is fully keyboard operable. The hour and minute wheels
-  are spin buttons: Up/Down change the value, Page Up/Down jump, Home/End go to the first and last value.
+  are spin buttons. A wheel is grey normally and turns red with an outline while it has focus. When focused, type the
+  number (7, or 1 then 0 for 10) and the wheel scrolls to it; Up/Down change the value, Page Up/Down jump,
+  Home/End go to the first and last value, Backspace clears it, and Escape or Tab leaves the wheel.
 - Arrive by / Leave at and the route list are real radio groups. AM/PM buttons report their pressed state.
 - The maps have a text description, and the same route is always available as a text list of steps.
 - Colour is never the only signal (selected items also have a check mark, a radio dot or a label).

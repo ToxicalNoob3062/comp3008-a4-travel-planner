@@ -1,11 +1,14 @@
 "use client";
 
 // A scrollable "wheel" for picking one value, like the time picker on a phone.
-// Scroll (or drag on touch), click a value, or use the arrow keys. The value in the middle band is the choice.
+// Mouse / touch: scroll or drag, or click a value.
+// Keyboard: Tab to the wheel (it turns red while focused), then type the number (7, or 1 then 0 for 10),
+// or use the arrow keys, Page Up/Down, Home/End. Backspace clears it. Escape or Tab leaves the wheel.
 import { useEffect, useRef } from "react";
 
 const ROW = 40; // height of one value, in px
 const VISIBLE = 3; // values shown at once
+const TYPING_PAUSE_MS = 1000; // digits typed within this time are read as one number
 
 interface TimeWheelProps {
   label: string;
@@ -15,35 +18,100 @@ interface TimeWheelProps {
   onChange: (value: string) => void;
   /** How far Page Up / Page Down move. */
   pageStep?: number;
+  /** Id of the text that explains how to use the wheel. */
+  describedBy?: string;
 }
 
-export default function TimeWheel({ label, options, value, onChange, pageStep = 5 }: TimeWheelProps) {
+export default function TimeWheel({ label, options, value, onChange, pageStep = 5, describedBy }: TimeWheelProps) {
   const listRef = useRef<HTMLDivElement>(null);
+  /** The row an animated scroll is heading to, or null when the wheel is not animating. */
+  const animatingTo = useRef<number | null>(null);
+  const animationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Digits typed so far, e.g. "1" while waiting to see if "0" follows. */
+  const typed = useRef("");
+  const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const index = Math.max(0, options.indexOf(value));
 
   // Keep the wheel lined up with the value (for example after an earlier/later search changes the time).
+  // Skipped while an animated scroll is already on its way to that value.
   useEffect(() => {
     const list = listRef.current;
-    if (list && Math.round(list.scrollTop / ROW) !== index) list.scrollTop = index * ROW;
+    if (!list || animatingTo.current === index) return;
+    if (Math.round(list.scrollTop / ROW) !== index) list.scrollTop = index * ROW;
   }, [index]);
 
-  // Click or key press: jump straight to the value, with no animation to wait for.
-  const select = (next: number) => {
-    const clamped = Math.min(options.length - 1, Math.max(0, next));
-    if (listRef.current) listRef.current.scrollTop = clamped * ROW;
-    if (options[clamped] !== value) onChange(options[clamped]);
+  useEffect(
+    () => () => {
+      if (animationTimer.current) clearTimeout(animationTimer.current);
+      if (typingTimer.current) clearTimeout(typingTimer.current);
+    },
+    [],
+  );
+
+  const stopAnimating = () => {
+    animatingTo.current = null;
+    if (animationTimer.current) clearTimeout(animationTimer.current);
   };
 
-  // Scrolling: the value in the middle band is the choice straight away, without waiting for the wheel
-  // to stop. (Waiting left Next locked for a moment, so a quick click on it did nothing.)
+  /** Chooses a row: the value changes straight away and the wheel scrolls to it. */
+  const select = (next: number) => {
+    const list = listRef.current;
+    const target = Math.min(options.length - 1, Math.max(0, next));
+    if (list) {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      stopAnimating();
+      if (reduceMotion || Math.round(list.scrollTop / ROW) === target) {
+        list.scrollTop = target * ROW;
+      } else {
+        animatingTo.current = target;
+        // Safety net in case the browser never reports reaching the row.
+        animationTimer.current = setTimeout(stopAnimating, 800);
+        list.scrollTo({ top: target * ROW, behavior: "smooth" });
+      }
+    }
+    if (options[target] !== value) onChange(options[target]);
+  };
+
+  // Scrolling by hand: the value in the middle band is the choice straight away.
   const onScroll = () => {
     const list = listRef.current;
     if (!list) return;
-    const next = Math.min(options.length - 1, Math.max(0, Math.round(list.scrollTop / ROW)));
-    if (options[next] !== value) onChange(options[next]);
+    const current = Math.min(options.length - 1, Math.max(0, Math.round(list.scrollTop / ROW)));
+    if (animatingTo.current !== null) {
+      // Rows passed during an animated scroll are not choices; only the destination is.
+      if (current === animatingTo.current) stopAnimating();
+      return;
+    }
+    if (options[current] !== value) onChange(options[current]);
   };
 
-  const onKeyDown = (event: React.KeyboardEvent) => {
+  /** Typing digits: "7" goes to 7; "1" then "0" goes to 10. */
+  const typeDigit = (digit: string) => {
+    const find = (text: string) => options.findIndex((option) => option !== "" && Number(option) === Number(text));
+    let text = typed.current + digit;
+    let match = text.length <= 2 ? find(text) : -1;
+    if (match === -1) {
+      // The two digits together are not a valid value, so start again from this digit.
+      text = digit;
+      match = find(text);
+    }
+    typed.current = match === -1 ? "" : text;
+    if (typingTimer.current) clearTimeout(typingTimer.current);
+    typingTimer.current = setTimeout(() => (typed.current = ""), TYPING_PAUSE_MS);
+    if (match !== -1) select(match);
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (/^\d$/.test(event.key)) {
+      event.preventDefault();
+      typeDigit(event.key);
+      return;
+    }
+    if (event.key === "Escape") {
+      event.currentTarget.blur();
+      return;
+    }
     const moves: Record<string, number> = {
       ArrowDown: index + 1,
       ArrowUp: index - 1,
@@ -51,9 +119,12 @@ export default function TimeWheel({ label, options, value, onChange, pageStep = 
       PageUp: index - pageStep,
       Home: options[0] === "" ? 1 : 0,
       End: options.length - 1,
+      Backspace: 0,
+      Delete: 0,
     };
     if (event.key in moves) {
       event.preventDefault();
+      typed.current = "";
       select(moves[event.key]);
     }
   };
@@ -64,21 +135,29 @@ export default function TimeWheel({ label, options, value, onChange, pageStep = 
       <span id={labelId} className="text-xs tracking-[0.15px] text-[rgba(57,56,63,0.6)]">
         {label}
       </span>
-      {/* The wrapper clips the list, which is wider than it, so the scrollbar is never visible in any browser. */}
-      <div className="relative w-[72px] overflow-hidden rounded-md has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2]">
-        {/* The highlighted band marks the chosen value. */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-10 h-10 rounded-md border border-brand bg-brand-tint" />
+      {/* The wrapper clips the list, which is wider than it, so the scrollbar is never visible in any browser.
+          `group` lets the band and the chosen value change colour while the wheel has focus. */}
+      <div className="group relative w-[72px] overflow-hidden rounded-md outline-offset-2 focus-within:outline-3 focus-within:outline-brand">
+        {/* The band marks the chosen value: grey normally, red while the wheel is focused. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-10 h-10 rounded-md border border-[#bdbdc2] bg-[#f2f2f4] transition-colors group-focus-within:border-brand group-focus-within:bg-brand-tint"
+        />
         <div
           ref={listRef}
           role="spinbutton"
           tabIndex={0}
           aria-labelledby={labelId}
+          aria-describedby={describedBy}
           aria-valuemin={Number(options.find((o) => o !== "") ?? 0)}
           aria-valuemax={Number(options[options.length - 1])}
           aria-valuenow={value === "" ? undefined : Number(value)}
           aria-valuetext={value === "" ? "Not chosen" : value}
           onScroll={onScroll}
           onKeyDown={onKeyDown}
+          // A wheel, touch or drag by the user takes over from any animated scroll.
+          onWheel={stopAnimating}
+          onTouchStart={stopAnimating}
           className="time-wheel relative w-[calc(100%+32px)] snap-y snap-mandatory overflow-y-scroll pr-8 outline-none"
           style={{ height: ROW * VISIBLE, paddingBlock: ROW }}
         >
@@ -88,7 +167,7 @@ export default function TimeWheel({ label, options, value, onChange, pageStep = 
               aria-hidden="true"
               onClick={() => select(i)}
               className={`flex cursor-pointer snap-center items-center justify-center text-lg tabular-nums select-none ${
-                i === index ? "font-semibold text-brand" : "text-[rgba(57,56,63,0.55)] hover:text-ink"
+                i === index ? "font-semibold text-ink group-focus-within:text-brand" : "text-[rgba(57,56,63,0.55)] hover:text-ink"
               }`}
               style={{ height: ROW }}
             >
