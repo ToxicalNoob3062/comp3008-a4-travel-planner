@@ -111,3 +111,16 @@ h2,
 figcaption {
   text-wrap: pretty;
 }
+
+/* Press feedback for our own buttons, pills and choice cards (MUI buttons get the same from the theme).
+   Keep the scale in step with PRESS_SCALE in components/motion/tokens.ts. */
+.press {
+  transition:
+    color 150ms,
+    background-color 150ms,
+    border-color 150ms,
+    transform 110ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.press:active {
+  transform: scale(0.95);
+}

@@ -7,8 +7,7 @@ import AlertTitle from "@mui/material/AlertTitle";
 import Button from "@mui/material/Button";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
-import { motion } from "motion/react";
-import { EASE_OUT } from "@/components/motion/FadeUp";
+import FadeUp from "@/components/motion/FadeUp";
 import Pop from "@/components/motion/Pop";
 import StepCard from "@/components/StepCard";
 import { resultsTitle, shiftLabel, timingNote } from "@/lib/labels";
@@ -55,11 +54,10 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
           const selected = route.id === state.selectedId;
           return (
             // Route cards arrive one after another, so the list reads top to bottom.
-            <motion.div
+            <FadeUp
               key={route.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: EASE_OUT, delay: 0.1 + i * 0.07 }}
+              order={i}
+              delay={0.1}
               className={`flex flex-wrap items-center gap-3 rounded-lg px-4 py-3 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] ${
                 selected ? "border-2 border-brand bg-brand-tint" : "border border-line bg-white p-[13px_17px] hover:border-ink"
               }`}
@@ -87,7 +85,7 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
               <Button variant="outlined" size="small" onClick={() => dispatch({ type: "OPEN_DETAILS", id: route.id })} aria-label={`Explore route leaving ${formatTime(route.leave)}`}>
                 Explore route
               </Button>
-            </motion.div>
+            </FadeUp>
           );
         })}
       </fieldset>

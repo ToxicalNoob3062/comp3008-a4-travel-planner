@@ -11,7 +11,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
-import { motion } from "motion/react";
+import DropIn from "@/components/motion/DropIn";
 import { formatDate, isValidDate } from "@/lib/time";
 
 interface DateFieldProps {
@@ -61,7 +61,7 @@ export default function DateField({ label, value, onChange, className }: DateFie
               setAnchor(event.currentTarget);
             }
           }}
-          className={`flex h-10 w-full cursor-pointer items-center gap-2 rounded-full border px-4 text-left transition-[color,background-color,border-color,transform] active:scale-[0.97] focus-visible:border-2 focus-visible:border-brand focus-visible:bg-brand-tint focus-visible:outline-none ${
+          className={`flex h-10 w-full cursor-pointer items-center gap-2 press rounded-full border px-4 text-left focus-visible:border-2 focus-visible:border-brand focus-visible:bg-brand-tint focus-visible:outline-none ${
             open ? "border-2 border-brand bg-brand-tint" : "border-[#bdbdc2] bg-[#f2f2f4] hover:border-ink"
           }`}
         >
@@ -82,12 +82,7 @@ export default function DateField({ label, value, onChange, className }: DateFie
           sx={{ zIndex: 1200 }}
         >
           {/* The calendar drops down from the pill it belongs to. */}
-          <motion.div
-            initial={{ opacity: 0, y: -8, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ type: "spring", stiffness: 520, damping: 30 }}
-            style={{ transformOrigin: "top left" }}
-          >
+          <DropIn>
           <Paper elevation={8} role="dialog" aria-label="Choose a date" sx={{ borderRadius: 3, mt: 0.5 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateCalendar
@@ -102,7 +97,7 @@ export default function DateField({ label, value, onChange, className }: DateFie
               />
             </LocalizationProvider>
           </Paper>
-          </motion.div>
+          </DropIn>
         </Popper>
       </div>
     </ClickAwayListener>

@@ -73,7 +73,7 @@ To reset the data, stop the app and delete `data/planner.db`.
 
 | Part | Files | Responsibility |
 | --- | --- | --- |
-| Screens (view) | `components/steps/StartScreen`, `WhereStep`, `WhenStep`, `ServicesStep`, `ReviewStep`, `ResultsScreen`, `TripPreview`; `components/RouteDetailsDialog`, `SearchErrorPanel`, `PlaceField`, `DateField`, `TimeWheel`, `Timeline`, `StepCard`, `StepActions`, `map/MapView`, `map/TripMap`, `motion/ScreenTransition`, `motion/Pop`, `motion/FadeUp` | Show the current state and report user actions. |
+| Screens (view) | `components/steps/StartScreen`, `WhereStep`, `WhenStep`, `ServicesStep`, `ReviewStep`, `ResultsScreen`, `TripPreview`; `components/RouteDetailsDialog`, `SearchErrorPanel`, `PlaceField`, `DateField`, `TimeWheel`, `Timeline`, `StepCard`, `StepActions`, `map/MapView`, `map/TripMap`, `motion/*` (see Motion below) | Show the current state and report user actions. |
 | Application logic | `components/TripPlanner.tsx` | Holds the state, decides which screen to show, calls the API (`runSearch`, `acceptSuggestedStop`, `addService`, `shiftTime`, `sendSelected`), moves focus when the screen changes. |
 | State | `lib/plannerReducer.ts` | `PlannerState`, every `Action`, the reducer, and the checks that unlock Next (`isWhereComplete`, `isWhenComplete`, `isServicesComplete`, `buildSearchRequest`). |
 | API client | `lib/api.ts` | `fetchPlaces` (loads the place list once, then `filterPlaces` filters it in the browser), `searchRoutes`, `sendTrip`: browser calls to the API routes, with network failures turned into messages. |
@@ -108,14 +108,19 @@ The screens, wording and order follow the Figma prototype. These are the differe
 
 ## Motion
 
-Animation is used to show what changed, not for decoration:
+Animation is used to show what changed, not for decoration. Every effect is its own small component in
+`components/motion/`, so it is written once and reused, and all timings live in `motion/tokens.ts`.
+Each one marks its element with a `data-motion` attribute, which makes it easy to find in tests or in the browser.
 
-- **Step transitions** slide in the direction of travel: forward comes from the right, Back from the left (`motion/ScreenTransition`).
-- **The progress bar** fills one segment when moving forward and drains it when going back (`ProgressBar` in `StepCard`).
-- **Buttons and pills** press down slightly when clicked.
-- **Message boxes** (tips, warnings, errors, the "Route sent" confirmation) pop in with a soft spring so they are noticed once, then stay still (`motion/Pop`).
-- **Route cards and route steps** appear one after another, in reading order.
-- The calendar drops down from the date pill, and the check mark pops in on the chosen Arrive by / Leave at card.
+| Component | `data-motion` | What it does | Used for |
+| --- | --- | --- | --- |
+| `ScreenTransition` | `screen` | Slides a screen in from the direction of travel (Next from the right, Back from the left) and moves focus to its heading. | Every step change, in `TripPlanner`. |
+| `ProgressBar` | `progress` | Fills the next segment going forward, drains it going back. | The four-step bar in `StepCard`. |
+| `Pop` | `pop` | Rises and settles with one soft bounce, then stays still. | Tips, warnings, errors, the goal sentence, the "Route sent" confirmation. |
+| `FadeUp` | `fade-up` | Fades and moves into place; `order` staggers a list, `from="left"` slides sideways, `as="li"` renders a list item. | Route cards, route steps, the start screen, the date and time row. |
+| `ScaleIn` | `scale-in` | Snaps a small element into view. | The check mark on the chosen Arrive by / Leave at card. |
+| `DropIn` | `drop-in` | Opens a panel downward from its control. | The calendar. |
+| `.press` (CSS class) and the MUI button theme | none | Presses the control down slightly while it is clicked. | Every button, pill and choice card. |
 
 ## Accessibility
 

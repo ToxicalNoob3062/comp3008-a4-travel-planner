@@ -11,9 +11,9 @@ import Flag from "@mui/icons-material/Flag";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import KeyboardOutlined from "@mui/icons-material/KeyboardOutlined";
 import RadioButtonUnchecked from "@mui/icons-material/RadioButtonUnchecked";
-import { motion } from "motion/react";
 import FadeUp from "@/components/motion/FadeUp";
 import Pop from "@/components/motion/Pop";
+import ScaleIn from "@/components/motion/ScaleIn";
 import DateField from "@/components/DateField";
 import StepActions from "@/components/StepActions";
 import StepCard from "@/components/StepCard";
@@ -62,11 +62,9 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
         {CHOICES.map(({ mode: choice, title, text, Icon }) => {
           const selected = mode === choice;
           return (
-            <motion.label
+            <label
               key={choice}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 600, damping: 30 }}
-              className={`flex flex-1 cursor-pointer items-center gap-4 rounded-[10px] px-5 py-[18px] has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] ${
+              className={`press flex flex-1 cursor-pointer items-center gap-4 rounded-[10px] px-5 py-[18px] has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] ${
                 selected
                   ? "border-2 border-brand bg-brand-tint shadow-[0_4px_12px_rgba(212,15,28,0.18)]"
                   : "border border-[#dcdcdf] bg-white p-[19px] hover:border-ink"
@@ -89,13 +87,13 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
               </span>
               {selected ? (
                 // The check mark pops in to confirm the choice.
-                <motion.span className="flex" initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 520, damping: 18 }}>
+                <ScaleIn>
                   <CheckCircle aria-hidden="true" color="primary" sx={{ fontSize: 22 }} />
-                </motion.span>
+                </ScaleIn>
               ) : (
                 <RadioButtonUnchecked aria-hidden="true" sx={{ fontSize: 22, color: "#8a8a8f" }} />
               )}
-            </motion.label>
+            </label>
           );
         })}
       </fieldset>
@@ -124,7 +122,7 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
                     type="button"
                     aria-pressed={pressed}
                     onClick={() => dispatch({ type: "SET_MERIDIEM", meridiem: value })}
-                    className={`focus-ring relative w-14 cursor-pointer border text-sm font-semibold transition-[color,background-color,border-color,transform] active:scale-95 focus-visible:z-10 ${
+                    className={`focus-ring relative w-14 cursor-pointer border text-sm font-semibold press transition-colors focus-visible:z-10 ${
                       i === 0 ? "rounded-l-full" : "-ml-px rounded-r-full"
                     } ${
                       pressed

@@ -3,6 +3,7 @@
 // Material UI theme matching the Assignment 3 Figma prototype (OC Transpo red, Inter).
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { MotionConfig } from "motion/react";
+import { PRESS_SCALE } from "@/components/motion/tokens";
 
 const theme = createTheme({
   cssVariables: true,
@@ -26,7 +27,7 @@ const theme = createTheme({
         root: {
           transition:
             "background-color 250ms, box-shadow 250ms, border-color 250ms, color 250ms, transform 110ms cubic-bezier(0.22, 1, 0.36, 1)",
-          "&:active": { transform: "scale(0.95)" },
+          "&:active": { transform: `scale(${PRESS_SCALE})` },
         },
       },
     },

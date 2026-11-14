@@ -4,15 +4,13 @@
 // going back it arrives from the left, so the motion matches the direction of travel through the steps.
 import { useEffect, useRef, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { EASE_OUT } from "./FadeUp";
-
-const DISTANCE = 36;
+import { DURATION, EASE_OUT, SLIDE_DISTANCE } from "./tokens";
 
 const variants = {
-  enter: (direction: number) => ({ opacity: 0, x: direction * DISTANCE }),
-  center: { opacity: 1, x: 0, transition: { duration: 0.3, ease: EASE_OUT } },
+  enter: (direction: number) => ({ opacity: 0, x: direction * SLIDE_DISTANCE }),
+  center: { opacity: 1, x: 0, transition: { duration: DURATION.enter, ease: EASE_OUT } },
   // The outgoing screen leaves quickly so a click never feels held up.
-  exit: (direction: number) => ({ opacity: 0, x: direction * -DISTANCE * 0.5, transition: { duration: 0.13, ease: "easeIn" as const } }),
+  exit: (direction: number) => ({ opacity: 0, x: direction * -SLIDE_DISTANCE * 0.5, transition: { duration: DURATION.exit, ease: "easeIn" as const } }),
 };
 
 let firstScreenShown = false;
@@ -31,6 +29,7 @@ function Screen({ direction, children }: { direction: number; children: ReactNod
   return (
     <motion.div
       ref={ref}
+      data-motion="screen"
       custom={direction}
       variants={variants}
       // The first screen after a page load does not slide in, but its own contents still animate.

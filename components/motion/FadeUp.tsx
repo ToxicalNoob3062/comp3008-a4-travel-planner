@@ -1,31 +1,45 @@
 "use client";
 
-// Gentle fade-and-rise for content that appears in sequence. `order` staggers items: 0 first, then 1, 2...
+// Fade-and-move entrance for content that appears, alone or in sequence.
+//   <FadeUp>                      one block rising into place
+//   <FadeUp order={i}>            item i of a staggered list
+//   <FadeUp as="li" from="left">  a list item sliding in from the left
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
+import { DURATION, EASE_OUT, STAGGER } from "./tokens";
 
-export const EASE_OUT = [0.22, 1, 0.36, 1] as const;
+const TAGS = { div: motion.div, li: motion.li } as const;
+const OFFSET = { below: { y: 14 }, left: { x: -10 } } as const;
 
 interface FadeUpProps {
   children: ReactNode;
   className?: string;
+  /** HTML element to render. */
+  as?: keyof typeof TAGS;
+  /** Where the content comes from. */
+  from?: keyof typeof OFFSET;
+  /** Position in a staggered list: 0 first, then 1, 2... */
   order?: number;
-  /** Seconds between one item and the next. */
-  step?: number;
+  /** Seconds to wait before the first item starts. */
+  delay?: number;
   /** True for decoration that screen readers should skip. */
   decorative?: boolean;
+  "aria-label"?: string;
 }
 
-export default function FadeUp({ children, className, order = 0, step = 0.06, decorative }: FadeUpProps) {
+export default function FadeUp({ children, className, as = "div", from = "below", order = 0, delay = 0, decorative, ...rest }: FadeUpProps) {
+  const Tag = TAGS[as];
   return (
-    <motion.div
+    <Tag
+      data-motion="fade-up"
       className={className}
       aria-hidden={decorative || undefined}
-      initial={{ opacity: 0, y: 14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: EASE_OUT, delay: order * step }}
+      aria-label={rest["aria-label"]}
+      initial={{ opacity: 0, ...OFFSET[from] }}
+      animate={{ opacity: 1, x: 0, y: 0 }}
+      transition={{ duration: DURATION.enter, ease: EASE_OUT, delay: delay + order * STAGGER }}
     >
       {children}
-    </motion.div>
+    </Tag>
   );
 }

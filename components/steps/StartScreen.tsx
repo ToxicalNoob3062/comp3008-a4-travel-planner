@@ -2,11 +2,10 @@
 
 import { useEffect } from "react";
 import Image from "next/image";
-import { motion } from "motion/react";
 import Button from "@mui/material/Button";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import FadeUp from "@/components/motion/FadeUp";
-import { resetProgress } from "@/components/StepCard";
+import { resetProgress } from "@/components/motion/ProgressBar";
 
 const STEPS = ["Where", "When", "Services", "Review"];
 
@@ -42,18 +41,12 @@ export default function StartScreen({ onStart }: { onStart: () => void }) {
       </p>
       <ol className="flex flex-wrap gap-x-6 gap-y-2" aria-label="The four steps">
         {STEPS.map((step, i) => (
-          <motion.li
-            key={step}
-            className="flex items-center gap-2 text-base text-ink"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.25 + i * 0.08 }}
-          >
+          <FadeUp as="li" key={step} order={i} delay={0.25} className="flex items-center gap-2 text-base text-ink">
             <span className="flex size-7 items-center justify-center rounded-full bg-brand-tint text-sm font-medium text-brand" aria-hidden="true">
               {i + 1}
             </span>
             {step}
-          </motion.li>
+          </FadeUp>
         ))}
       </ol>
 
