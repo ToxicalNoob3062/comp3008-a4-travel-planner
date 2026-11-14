@@ -11,6 +11,9 @@ import Flag from "@mui/icons-material/Flag";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import KeyboardOutlined from "@mui/icons-material/KeyboardOutlined";
 import RadioButtonUnchecked from "@mui/icons-material/RadioButtonUnchecked";
+import { motion } from "motion/react";
+import FadeUp from "@/components/motion/FadeUp";
+import Pop from "@/components/motion/Pop";
 import DateField from "@/components/DateField";
 import StepActions from "@/components/StepActions";
 import StepCard from "@/components/StepCard";
@@ -59,8 +62,10 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
         {CHOICES.map(({ mode: choice, title, text, Icon }) => {
           const selected = mode === choice;
           return (
-            <label
+            <motion.label
               key={choice}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 600, damping: 30 }}
               className={`flex flex-1 cursor-pointer items-center gap-4 rounded-[10px] px-5 py-[18px] has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] ${
                 selected
                   ? "border-2 border-brand bg-brand-tint shadow-[0_4px_12px_rgba(212,15,28,0.18)]"
@@ -83,17 +88,21 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
                 <span className="text-sm text-[#6b6a70]">{text}</span>
               </span>
               {selected ? (
-                <CheckCircle aria-hidden="true" color="primary" sx={{ fontSize: 22 }} />
+                // The check mark pops in to confirm the choice.
+                <motion.span className="flex" initial={{ scale: 0, rotate: -45 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 520, damping: 18 }}>
+                  <CheckCircle aria-hidden="true" color="primary" sx={{ fontSize: 22 }} />
+                </motion.span>
               ) : (
                 <RadioButtonUnchecked aria-hidden="true" sx={{ fontSize: 22, color: "#8a8a8f" }} />
               )}
-            </label>
+            </motion.label>
           );
         })}
       </fieldset>
 
       {mode ? (
-        <>
+        // The date and time controls rise into place once Arrive by / Leave at is chosen.
+        <FadeUp className="flex flex-col gap-6">
           <div className="flex flex-wrap items-start justify-between gap-x-5 gap-y-4">
             <DateField
               label="Date"
@@ -115,7 +124,7 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
                     type="button"
                     aria-pressed={pressed}
                     onClick={() => dispatch({ type: "SET_MERIDIEM", meridiem: value })}
-                    className={`focus-ring relative w-14 cursor-pointer border text-sm font-semibold transition-colors focus-visible:z-10 ${
+                    className={`focus-ring relative w-14 cursor-pointer border text-sm font-semibold transition-[color,background-color,border-color,transform] active:scale-95 focus-visible:z-10 ${
                       i === 0 ? "rounded-l-full" : "-ml-px rounded-r-full"
                     } ${
                       pressed
@@ -143,6 +152,7 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
               Its space is reserved so the buttons below do not move when it appears. */}
           <div aria-live="polite" className="min-h-[78px]">
             {complete && time !== null ? (
+              <Pop>
               <Alert severity="info" icon={<InfoOutlined color="primary" />} sx={{ bgcolor: "#f5f5f5", color: "text.primary" }}>
                 <AlertTitle sx={{ fontWeight: 500, mb: 0.5 }}>
                   {mode === "arrive"
@@ -151,9 +161,10 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
                 </AlertTitle>
                 {mode === "arrive" ? "by" : "at"} {formatTime(time)} ({format24(time)}) on {formatDate(date, "long")}.
               </Alert>
+              </Pop>
             ) : null}
           </div>
-        </>
+        </FadeUp>
       ) : (
         <p className="rounded bg-[#f5f5f5] px-4 py-3 text-sm text-ink">
           Pick one. The date and time appear after you choose, and nothing is chosen for you.

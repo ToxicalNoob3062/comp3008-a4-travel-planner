@@ -65,6 +65,7 @@ To reset the data, stop the app and delete `data/planner.db`.
 
 - Next.js 16 (App Router) and React 19, TypeScript
 - Material UI components (the Figma prototype was built with the Material UI kit), the MUI X calendar (`@mui/x-date-pickers` with `dayjs`), and Tailwind CSS for layout
+- Motion (`motion`, formerly Framer Motion) for transitions and feedback animations
 - SQLite (`node:sqlite`) for places, lines and saved routes
 - Three API routes (below), Leaflet + OpenStreetMap for the maps
 
@@ -72,7 +73,7 @@ To reset the data, stop the app and delete `data/planner.db`.
 
 | Part | Files | Responsibility |
 | --- | --- | --- |
-| Screens (view) | `components/steps/StartScreen`, `WhereStep`, `WhenStep`, `ServicesStep`, `ReviewStep`, `ResultsScreen`, `TripPreview`; `components/RouteDetailsDialog`, `SearchErrorPanel`, `PlaceField`, `DateField`, `TimeWheel`, `Timeline`, `StepCard`, `StepActions`, `map/MapView`, `map/TripMap` | Show the current state and report user actions. |
+| Screens (view) | `components/steps/StartScreen`, `WhereStep`, `WhenStep`, `ServicesStep`, `ReviewStep`, `ResultsScreen`, `TripPreview`; `components/RouteDetailsDialog`, `SearchErrorPanel`, `PlaceField`, `DateField`, `TimeWheel`, `Timeline`, `StepCard`, `StepActions`, `map/MapView`, `map/TripMap`, `motion/ScreenTransition`, `motion/Pop`, `motion/FadeUp` | Show the current state and report user actions. |
 | Application logic | `components/TripPlanner.tsx` | Holds the state, decides which screen to show, calls the API (`runSearch`, `acceptSuggestedStop`, `addService`, `shiftTime`, `sendSelected`), moves focus when the screen changes. |
 | State | `lib/plannerReducer.ts` | `PlannerState`, every `Action`, the reducer, and the checks that unlock Next (`isWhereComplete`, `isWhenComplete`, `isServicesComplete`, `buildSearchRequest`). |
 | API client | `lib/api.ts` | `fetchPlaces` (loads the place list once, then `filterPlaces` filters it in the browser), `searchRoutes`, `sendTrip`: browser calls to the API routes, with network failures turned into messages. |
@@ -105,6 +106,17 @@ The screens, wording and order follow the Figma prototype. These are the differe
     on "– –", so no time is chosen for the user.
 11. **The card grows with its content and the layout works on a phone.** The prototype was a fixed 1280 × 800 frame.
 
+## Motion
+
+Animation is used to show what changed, not for decoration:
+
+- **Step transitions** slide in the direction of travel: forward comes from the right, Back from the left (`motion/ScreenTransition`).
+- **The progress bar** fills one segment when moving forward and drains it when going back (`ProgressBar` in `StepCard`).
+- **Buttons and pills** press down slightly when clicked.
+- **Message boxes** (tips, warnings, errors, the "Route sent" confirmation) pop in with a soft spring so they are noticed once, then stay still (`motion/Pop`).
+- **Route cards and route steps** appear one after another, in reading order.
+- The calendar drops down from the date pill, and the check mark pops in on the chosen Arrive by / Leave at card.
+
 ## Accessibility
 
 - Every control works from the keyboard, with a visible focus ring. There is a "Skip to the trip planner" link.
@@ -117,7 +129,8 @@ The screens, wording and order follow the Figma prototype. These are the differe
 - Arrive by / Leave at and the route list are real radio groups. AM/PM buttons report their pressed state.
 - The maps have a text description, and the same route is always available as a text list of steps.
 - Colour is never the only signal (selected items also have a check mark, a radio dot or a label).
-- Animations are reduced when the system asks for reduced motion.
+- Animations are reduced when the system asks for reduced motion: sliding and bouncing are switched off and only fades remain
+  (`MotionConfig reducedMotion="user"` in `app/providers.tsx`).
 
 ## Deploying to Vercel
 

@@ -1,5 +1,8 @@
+"use client";
+
 // The list of every walk, bus, train and transfer in a route, with times.
 // Used in the Route details popup, the Trip preview screen and the saved-trip page.
+import { motion } from "motion/react";
 import { formatClock, formatTime } from "@/lib/time";
 import type { Itinerary } from "@/lib/types";
 
@@ -51,7 +54,15 @@ export default function Timeline({ itinerary, destination }: { itinerary: Itiner
   return (
     <ol className="flex flex-col" aria-label="Route steps">
       {list.map((row, i) => (
-        <li key={i} className="flex items-stretch gap-3 text-[15px] text-ink" aria-label={`${formatTime(row.time)}: ${row.label}`}>
+        <motion.li
+          key={i}
+          className="flex items-stretch gap-3 text-[15px] text-ink"
+          aria-label={`${formatTime(row.time)}: ${row.label}`}
+          // Steps appear in travel order, one after another.
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.12 + i * 0.07 }}
+        >
           <span className="w-10 shrink-0 pt-px text-sm text-muted tabular-nums" aria-hidden="true">
             {formatClock(row.time)}
           </span>
@@ -62,7 +73,7 @@ export default function Timeline({ itinerary, destination }: { itinerary: Itiner
           <span className="pb-4" aria-hidden="true">
             {row.text}
           </span>
-        </li>
+        </motion.li>
       ))}
     </ol>
   );

@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
+import Pop from "@/components/motion/Pop";
 import SearchErrorPanel from "@/components/SearchErrorPanel";
 import StepCard from "@/components/StepCard";
 import { requestedTime, selectedServices, type Action, type EditableStep, type PlannerState } from "@/lib/plannerReducer";
@@ -91,6 +92,7 @@ export default function ReviewStep({ state, dispatch, onSearch, onUseStop, onAdd
 
       <div ref={errorRef} tabIndex={-1} role="alert" className="outline-none">
         {error ? (
+          <Pop key={error.code}>
           <SearchErrorPanel
             error={error}
             busy={searching}
@@ -99,6 +101,7 @@ export default function ReviewStep({ state, dispatch, onSearch, onUseStop, onAdd
             onRetry={onSearch}
             onEdit={(step) => dispatch({ type: "EDIT", step })}
           />
+          </Pop>
         ) : null}
       </div>
       <p className="visually-hidden" aria-live="polite">

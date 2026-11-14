@@ -1,7 +1,8 @@
 "use client";
 
 // The planner: owns the state (one reducer), talks to the API, and shows the current screen.
-import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useCallback, useReducer, useState } from "react";
+import ScreenTransition from "@/components/motion/ScreenTransition";
 import RouteDetailsDialog from "@/components/RouteDetailsDialog";
 import ResultsScreen from "@/components/steps/ResultsScreen";
 import ReviewStep from "@/components/steps/ReviewStep";
@@ -12,23 +13,21 @@ import WhenStep from "@/components/steps/WhenStep";
 import WhereStep from "@/components/steps/WhereStep";
 import { searchRoutes, sendTrip } from "@/lib/api";
 import { shiftLabel, timingNote } from "@/lib/labels";
-import { buildSearchRequest, initialState, plannerReducer } from "@/lib/plannerReducer";
+import { buildSearchRequest, initialState, plannerReducer, type Screen } from "@/lib/plannerReducer";
 import type { SearchRequest, ServiceId } from "@/lib/types";
+
+const SCREEN_ORDER: Screen[] = ["start", "where", "when", "services", "review", "results", "preview"];
 
 export default function TripPlanner() {
   const [state, dispatch] = useReducer(plannerReducer, initialState);
 
-  // Accessibility: when the screen changes, move keyboard focus to its heading
-  // so screen-reader and keyboard users start at the top of the new step.
-  const firstRender = useRef(true);
-  useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    document.querySelector<HTMLElement>("[data-screen-heading]")?.focus();
-    window.scrollTo({ top: 0 });
-  }, [state.screen]);
+  // Which way the user is moving through the steps, so the transition slides the matching way.
+  const [shown, setShown] = useState<Screen>(state.screen);
+  const [direction, setDirection] = useState(1);
+  if (shown !== state.screen) {
+    setDirection(SCREEN_ORDER.indexOf(state.screen) >= SCREEN_ORDER.indexOf(shown) ? 1 : -1);
+    setShown(state.screen);
+  }
 
   /** Runs a search. `changes` holds answers that were changed in the same click (state updates are not instant). */
   const runSearch = useCallback(
@@ -95,47 +94,56 @@ export default function TripPlanner() {
 
   const sending = state.send.status === "sending";
 
-  switch (state.screen) {
-    case "start":
-      return <StartScreen onStart={() => dispatch({ type: "GO", screen: "where" })} />;
-    case "where":
-      return <WhereStep state={state} dispatch={dispatch} />;
-    case "when":
-      return <WhenStep state={state} dispatch={dispatch} />;
-    case "services":
-      return <ServicesStep state={state} dispatch={dispatch} />;
-    case "review":
-      return <ReviewStep state={state} dispatch={dispatch} onSearch={() => void runSearch()} onUseStop={acceptSuggestedStop} onAddService={addService} />;
-    case "preview":
-      if (selected && state.from && state.to) {
+  const renderScreen = () => {
+    switch (state.screen) {
+      case "start":
+        return <StartScreen onStart={() => dispatch({ type: "GO", screen: "where" })} />;
+      case "where":
+        return <WhereStep state={state} dispatch={dispatch} />;
+      case "when":
+        return <WhenStep state={state} dispatch={dispatch} />;
+      case "services":
+        return <ServicesStep state={state} dispatch={dispatch} />;
+      case "review":
+        return <ReviewStep state={state} dispatch={dispatch} onSearch={() => void runSearch()} onUseStop={acceptSuggestedStop} onAddService={addService} />;
+      case "preview":
+        if (selected && state.from && state.to) {
+          return (
+            <TripPreview
+              itinerary={selected}
+              from={state.from}
+              to={state.to}
+              date={state.date}
+              sending={sending}
+              onBack={() => dispatch({ type: "GO", screen: "results" })}
+              onSend={() => void sendSelected()}
+            />
+          );
+        }
+      // falls through to the results when there is nothing to preview
+      case "results":
         return (
-          <TripPreview
-            itinerary={selected}
-            from={state.from}
-            to={state.to}
-            date={state.date}
-            sending={sending}
-            onBack={() => dispatch({ type: "GO", screen: "results" })}
-            onSend={() => void sendSelected()}
-          />
+          <>
+            <ResultsScreen state={state} dispatch={dispatch} onShift={shiftTime} onSend={() => void sendSelected()} onReset={() => dispatch({ type: "RESET" })} />
+            <RouteDetailsDialog
+              itinerary={details}
+              date={state.date}
+              destination={state.to?.name ?? ""}
+              timingNote={details && state.mode ? timingNote(details, state.mode) : ""}
+              sending={sending}
+              onClose={() => dispatch({ type: "CLOSE_DETAILS" })}
+              onPreview={() => dispatch({ type: "GO", screen: "preview" })}
+              onSend={() => void sendSelected()}
+            />
+          </>
         );
-      }
-    // falls through to the results when there is nothing to preview
-    case "results":
-      return (
-        <>
-          <ResultsScreen state={state} dispatch={dispatch} onShift={shiftTime} onSend={() => void sendSelected()} onReset={() => dispatch({ type: "RESET" })} />
-          <RouteDetailsDialog
-            itinerary={details}
-            date={state.date}
-            destination={state.to?.name ?? ""}
-            timingNote={details && state.mode ? timingNote(details, state.mode) : ""}
-            sending={sending}
-            onClose={() => dispatch({ type: "CLOSE_DETAILS" })}
-            onPreview={() => dispatch({ type: "GO", screen: "preview" })}
-            onSend={() => void sendSelected()}
-          />
-        </>
-      );
-  }
+    }
+  };
+
+  // The planner moves focus to each new screen's heading inside ScreenTransition.
+  return (
+    <ScreenTransition screenKey={state.screen} direction={direction}>
+      {renderScreen()}
+    </ScreenTransition>
+  );
 }

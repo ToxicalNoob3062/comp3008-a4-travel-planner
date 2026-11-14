@@ -5,6 +5,7 @@ import type { Dispatch } from "react";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
+import Pop from "@/components/motion/Pop";
 import StepActions from "@/components/StepActions";
 import StepCard from "@/components/StepCard";
 import { isServicesComplete, type Action, type PlannerState } from "@/lib/plannerReducer";
@@ -50,11 +51,14 @@ export default function ServicesStep({ state, dispatch }: { state: PlannerState;
       </fieldset>
 
       <div aria-live="polite">
-        {complete ? (
-          <Alert severity="warning">Unchecking a service removes those trips from your results.</Alert>
-        ) : (
-          <Alert severity="error">No service is selected, so there would be no trips to show. Choose at least one, or use the recommended set.</Alert>
-        )}
+        {/* The key makes the box pop again when it switches between the note and the error. */}
+        <Pop key={complete ? "note" : "error"}>
+          {complete ? (
+            <Alert severity="warning">Unchecking a service removes those trips from your results.</Alert>
+          ) : (
+            <Alert severity="error">No service is selected, so there would be no trips to show. Choose at least one, or use the recommended set.</Alert>
+          )}
+        </Pop>
       </div>
     </StepCard>
   );

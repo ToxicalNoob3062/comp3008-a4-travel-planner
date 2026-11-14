@@ -1,5 +1,9 @@
+"use client";
+
 // The white card every screen sits in: title, "Step N of 4", progress bar, content and actions.
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { motion } from "motion/react";
+import { EASE_OUT } from "@/components/motion/FadeUp";
 
 interface StepCardProps {
   title: string;
@@ -12,6 +16,46 @@ interface StepCardProps {
 }
 
 export const TOTAL_STEPS = 4;
+
+// The step whose progress was last on screen. Each step draws its own bar, so this is what lets
+// the bar animate from where it was (1 -> 2 fills the second segment; 3 -> 2 drains the third).
+let lastShownStep = 0;
+
+/** Called from the start screen so a new trip begins with an empty bar. */
+export function resetProgress() {
+  lastShownStep = 0;
+}
+
+function ProgressBar({ step }: { step: number }) {
+  const [from] = useState(lastShownStep);
+  useEffect(() => {
+    lastShownStep = step;
+  }, [step]);
+
+  return (
+    <div
+      role="progressbar"
+      aria-label="Planning progress"
+      aria-valuemin={1}
+      aria-valuemax={TOTAL_STEPS}
+      aria-valuenow={step}
+      aria-valuetext={`Step ${step} of ${TOTAL_STEPS}`}
+      className="flex gap-2"
+    >
+      {Array.from({ length: TOTAL_STEPS }, (_, i) => (
+        <div key={i} className="h-1.5 flex-1 overflow-hidden rounded-full bg-line">
+          <motion.div
+            className="h-full origin-left rounded-full bg-brand"
+            initial={{ scaleX: i < from ? 1 : 0 }}
+            animate={{ scaleX: i < step ? 1 : 0 }}
+            // Starts just after the new screen has slid in, so the eye can follow it.
+            transition={{ duration: 0.55, ease: EASE_OUT, delay: 0.18 }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function StepCard({ title, step, headerAction, children, actions }: StepCardProps) {
   return (
@@ -33,21 +77,7 @@ export default function StepCard({ title, step, headerAction, children, actions 
         )}
       </div>
 
-      {step ? (
-        <div
-          role="progressbar"
-          aria-label="Planning progress"
-          aria-valuemin={1}
-          aria-valuemax={TOTAL_STEPS}
-          aria-valuenow={step}
-          aria-valuetext={`Step ${step} of ${TOTAL_STEPS}`}
-          className="flex gap-2"
-        >
-          {Array.from({ length: TOTAL_STEPS }, (_, i) => (
-            <div key={i} className={`h-1.5 flex-1 rounded-full ${i < step ? "bg-brand" : "bg-line"}`} />
-          ))}
-        </div>
-      ) : null}
+      {step ? <ProgressBar step={step} /> : null}
 
       {children}
 

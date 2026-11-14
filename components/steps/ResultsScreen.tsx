@@ -7,6 +7,9 @@ import AlertTitle from "@mui/material/AlertTitle";
 import Button from "@mui/material/Button";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
+import { motion } from "motion/react";
+import { EASE_OUT } from "@/components/motion/FadeUp";
+import Pop from "@/components/motion/Pop";
 import StepCard from "@/components/StepCard";
 import { resultsTitle, shiftLabel, timingNote } from "@/lib/labels";
 import { requestedTime, type Action, type PlannerState } from "@/lib/plannerReducer";
@@ -48,11 +51,15 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
 
       <fieldset className="flex flex-col gap-3" aria-busy={busy}>
         <legend className="visually-hidden">Choose a route</legend>
-        {state.results.map((route) => {
+        {state.results.map((route, i) => {
           const selected = route.id === state.selectedId;
           return (
-            <div
+            // Route cards arrive one after another, so the list reads top to bottom.
+            <motion.div
               key={route.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: EASE_OUT, delay: 0.1 + i * 0.07 }}
               className={`flex flex-wrap items-center gap-3 rounded-lg px-4 py-3 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] ${
                 selected ? "border-2 border-brand bg-brand-tint" : "border border-line bg-white p-[13px_17px] hover:border-ink"
               }`}
@@ -80,14 +87,19 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
               <Button variant="outlined" size="small" onClick={() => dispatch({ type: "OPEN_DETAILS", id: route.id })} aria-label={`Explore route leaving ${formatTime(route.leave)}`}>
                 Explore route
               </Button>
-            </div>
+            </motion.div>
           );
         })}
       </fieldset>
 
       <div aria-live="polite" className="flex flex-col gap-3">
-        {state.notice ? <Alert severity="warning">{state.notice}</Alert> : null}
+        {state.notice ? (
+          <Pop key={state.notice}>
+            <Alert severity="warning">{state.notice}</Alert>
+          </Pop>
+        ) : null}
         {send.status === "sent" && sentRoute ? (
+          <Pop>
           <Alert severity="success">
             <AlertTitle sx={{ fontWeight: 500 }}>Route sent to your phone</AlertTitle>
             Leave {formatTime(sentRoute.leave)} from {state.from?.name}, arrive {formatTime(sentRoute.arrive)} ({timingNote(sentRoute, mode)}).
@@ -104,6 +116,7 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
               See what was sent (opens in a new tab)
             </a>
           </Alert>
+          </Pop>
         ) : null}
         {send.status === "error" ? (
           <Alert
