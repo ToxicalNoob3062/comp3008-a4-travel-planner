@@ -166,9 +166,12 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
           </div>
         </FadeUp>
       ) : (
-        <p className="rounded bg-[#f5f5f5] px-4 py-3 text-sm text-ink">
-          Pick one. The date and time appear after you choose, and nothing is chosen for you.
-        </p>
+        // A real message box (not a plain paragraph), so it pops in and wraps like every other one.
+        <Pop>
+          <Alert severity="info" icon={<InfoOutlined color="primary" />} sx={{ bgcolor: "#f5f5f5", color: "text.primary" }}>
+            Pick one. The date and time appear after you choose, and nothing is chosen for you.
+          </Alert>
+        </Pop>
       )}
     </StepCard>
   );
