@@ -9,6 +9,7 @@ import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import FadeUp from "@/components/motion/FadeUp";
 import Pop from "@/components/motion/Pop";
+import SelectionHighlight from "@/components/motion/SelectionHighlight";
 import StepCard from "@/components/StepCard";
 import { resultsTitle, shiftLabel, timingNote } from "@/lib/labels";
 import { requestedTime, type Action, type PlannerState } from "@/lib/plannerReducer";
@@ -60,11 +61,13 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
               key={`${time}-${route.id}`}
               order={i}
               delay={0.1}
-              className={`flex flex-wrap items-center gap-3 rounded-lg px-4 py-3 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] ${
-                selected ? "border-2 border-brand bg-brand-tint" : "border border-line bg-white p-[13px_17px] hover:border-ink"
+              // Every card has the same size and border; the selected look is a separate layer that slides between cards.
+              className={`relative flex flex-wrap items-center gap-3 rounded-lg border bg-white px-4 py-3 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] ${
+                selected ? "border-transparent" : "border-line hover:border-ink"
               }`}
             >
-              <label className="flex min-w-[220px] flex-1 cursor-pointer items-start gap-3">
+              {selected ? <SelectionHighlight group="route" className="rounded-lg border-2 border-brand bg-brand-tint" /> : null}
+              <label className="relative flex min-w-[220px] flex-1 cursor-pointer items-start gap-3">
                 <input
                   type="radio"
                   name="route"
@@ -84,7 +87,7 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
                   </span>
                 </span>
               </label>
-              <Button variant="outlined" size="small" onClick={() => dispatch({ type: "OPEN_DETAILS", id: route.id })} aria-label={`Explore route leaving ${formatTime(route.leave)}`}>
+              <Button className="relative" variant="outlined" size="small" onClick={() => dispatch({ type: "OPEN_DETAILS", id: route.id })} aria-label={`Explore route leaving ${formatTime(route.leave)}`}>
                 Explore route
               </Button>
             </FadeUp>
