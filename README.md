@@ -57,7 +57,7 @@ O-Train Lines 1 and 2, Buses 6, 10, 39, 61 and 75, STO 400, School route 639 (we
 Event shuttle 450 (runs only on 2026-11-21, 2026-11-28 and 2026-12-05). The network is a simplified
 slice of Ottawa and the timetable is made up. Any date works, including past dates such as October 6, 2026.
 
-"Send to my phone" is simulated: the route is saved in SQLite and shown at `/trip/<code>`. No message is sent.
+"Send to my phone" is simulated: the route is saved in SQLite and shown at `/trip/<code>` with its steps and a map. No message is sent.
 
 To reset the data, stop the app and delete `data/planner.db`.
 

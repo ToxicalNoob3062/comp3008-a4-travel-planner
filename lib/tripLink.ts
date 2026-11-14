@@ -1,13 +1,11 @@
 // Link to the saved-route page. The route travels in the link as well as being stored in SQLite,
 // so the page still works where the database file is temporary (Vercel keeps it in /tmp per function).
-import type { Itinerary, SavedTrip } from "./types";
+import type { SavedTrip } from "./types";
 
 type LinkTrip = Omit<SavedTrip, "createdAt">;
 
 export function tripLink(trip: LinkTrip): string {
-  // Map coordinates are not needed on the saved-route page, so they are left out to keep the link short.
-  const itinerary: Itinerary = { ...trip.itinerary, legs: trip.itinerary.legs.map((leg) => ({ ...leg, path: [] })) };
-  return `/trip/${trip.code}?d=${encodeURIComponent(JSON.stringify({ ...trip, itinerary }))}`;
+  return `/trip/${trip.code}?d=${encodeURIComponent(JSON.stringify(trip))}`;
 }
 
 /** Reads a route back out of the link. Returns null if the data is missing or not a route. */
@@ -26,7 +24,14 @@ export function tripFromLink(data: string | string[] | undefined, code: string):
       Number.isInteger(it?.walkMinutes) &&
       Number.isInteger(it?.offsetMinutes) &&
       Array.isArray(it?.legs) &&
-      it.legs.every((leg) => (leg.type === "walk" || leg.type === "ride") && Number.isInteger(leg.depart));
+      it.legs.every(
+        (leg) =>
+          (leg.type === "walk" || leg.type === "ride") &&
+          Number.isInteger(leg.depart) &&
+          // Map coordinates: a list of [latitude, longitude] pairs.
+          Array.isArray(leg.path) &&
+          leg.path.every((point) => Array.isArray(point) && point.length === 2 && point.every((n) => Number.isFinite(n))),
+      );
     return valid ? { ...trip, code: code.toUpperCase() } : null;
   } catch {
     return null;

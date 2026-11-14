@@ -4,6 +4,7 @@
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
+import MapLegend from "@/components/map/MapLegend";
 import MapView from "@/components/map/MapView";
 import { itineraryToMap } from "@/components/map/tripToMap";
 import StepCard from "@/components/StepCard";
@@ -20,12 +21,6 @@ interface TripPreviewProps {
   onBack: () => void;
   onSend: () => void;
 }
-
-const LEGEND: { label: string; className: string }[] = [
-  { label: "Walk", className: "border-t-4 border-dotted border-ink" },
-  { label: "Bus", className: "border-t-4 border-[#1976d2]" },
-  { label: "O-Train", className: "border-t-4 border-brand" },
-];
 
 export default function TripPreview({ itinerary, from, to, date, sending, onBack, onSend }: TripPreviewProps) {
   const { markers, lines } = itineraryToMap(itinerary, from, to);
@@ -57,14 +52,7 @@ export default function TripPreview({ itinerary, from, to, date, sending, onBack
             markers={markers}
             lines={lines}
           />
-          <ul className="flex flex-wrap gap-4 text-xs text-muted" aria-label="Map legend">
-            {LEGEND.map((item) => (
-              <li key={item.label} className="flex items-center gap-2">
-                <span className={`inline-block w-7 ${item.className}`} aria-hidden="true" />
-                {item.label}
-              </li>
-            ))}
-          </ul>
+          <MapLegend />
         </div>
       </div>
     </StepCard>

@@ -1,6 +1,9 @@
 // The page a "Send to my phone" link opens: the saved route, read back from SQLite.
 import { Suspense } from "react";
 import Link from "next/link";
+import MapView from "@/components/map/MapView";
+import { savedTripToMap } from "@/components/map/tripToMap";
+import MapLegend from "@/components/map/MapLegend";
 import Timeline from "@/components/Timeline";
 import { getSavedTrip } from "@/lib/db";
 import { timingNote } from "@/lib/labels";
@@ -31,6 +34,7 @@ async function SavedTripCard({ params, searchParams }: Pick<PageProps<"/trip/[co
     );
   }
   const { itinerary } = trip;
+  const map = savedTripToMap(itinerary, trip.fromName, trip.toName);
   return (
     <>
       <p className="text-sm font-medium text-brand">Sent to your phone · Reference {trip.code}</p>
@@ -42,6 +46,18 @@ async function SavedTripCard({ params, searchParams }: Pick<PageProps<"/trip/[co
         {itinerary.walkMinutes} min · {timingNote(itinerary, trip.mode)}
       </p>
       <Timeline itinerary={itinerary} destination={trip.toName} />
+      {map ? (
+        <div className="flex flex-col gap-2">
+          <h2 className="text-base font-semibold text-ink">Map of your route</h2>
+          <MapView
+            className="h-[320px]"
+            description={`Map of the route from ${trip.fromName} (A) to ${trip.toName} (B). The same steps are listed above.`}
+            markers={map.markers}
+            lines={map.lines}
+          />
+          <MapLegend />
+        </div>
+      ) : null}
     </>
   );
 }
