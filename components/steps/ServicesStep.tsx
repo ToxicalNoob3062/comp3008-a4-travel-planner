@@ -24,7 +24,7 @@ export default function ServicesStep({ state, dispatch }: { state: PlannerState;
           onNext={() => dispatch({ type: "GO", screen: "review" })}
           nextDisabled={!complete}
           extra={
-            <Button size="large" onClick={() => dispatch({ type: "USE_RECOMMENDED" })}>
+            <Button variant="outlined" size="large" onClick={() => dispatch({ type: "USE_RECOMMENDED" })}>
               Use recommended
             </Button>
           }
