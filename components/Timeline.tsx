@@ -61,17 +61,17 @@ export default function Timeline({ itinerary, destination }: { itinerary: Itiner
           key={i}
           order={i}
           delay={0.12}
-          className="flex items-stretch gap-3 text-[15px] text-ink"
+          className="flex items-stretch gap-2.5 text-sm text-ink sm:gap-3 sm:text-[15px]"
           aria-label={`${formatTime(row.time)}: ${row.label}`}
         >
-          <span className="w-10 shrink-0 pt-px text-sm text-muted tabular-nums" aria-hidden="true">
+          <span className="w-10 shrink-0 pt-px text-[13px] text-muted tabular-nums sm:text-sm" aria-hidden="true">
             {formatClock(row.time)}
           </span>
           <span className="relative flex w-4 shrink-0 justify-center" aria-hidden="true">
             {row.last ? null : <span className="absolute top-3 bottom-[-4px] w-0.5 bg-brand" />}
-            <span className={`relative mt-1 h-3.5 w-3.5 rounded-full border-2 border-brand ${row.last ? "bg-brand" : "bg-white"}`} />
+            <span className={`relative mt-[3px] h-3.5 w-3.5 sm:mt-1 rounded-full border-2 border-brand ${row.last ? "bg-brand" : "bg-white"}`} />
           </span>
-          <span className="pb-4" aria-hidden="true">
+          <span className="pb-3 sm:pb-4" aria-hidden="true">
             {row.text}
           </span>
         </FadeUp>
