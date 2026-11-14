@@ -40,12 +40,12 @@ Start on the first screen, **Plan a trip**, and press **Start planning**.
 
 **Task:** find a route from *Place d'Orléans Dr* to *Carleton University* that arrives by 5:30 PM on Tuesday, October 6, 2026.
 
-| Step | What to do | What happens |
+| Step&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | What to do | What happens |
 | --- | --- | --- |
-| 1. Where | Type `orleans` in **From** and pick **Place d'Orléans Dr**. Type `carl` in **To** and pick **Carleton University**. | Suggestions filter as you type. A map preview appears when both are chosen, and **Next** unlocks. |
-| 2. When | Choose **Arrive by**. Press **Choose date** and pick October 6, 2026 in the calendar. Click the **hour** wheel and scroll or type `5`, then the **min** wheel and `30` (or click a value directly; on a phone, swipe or tap), then press **PM**. | The date and time controls only appear after you choose Arrive by or Leave at. A sentence repeats the goal back. |
-| 3. Services | Leave the recommended services, press **Next**. | Each option is explained in plain language. |
-| 4. Review | Press **Find my routes**. | **Error path:** no stop is within the 10-minute walking limit of Place d'Orléans Dr. |
+| 1.&nbsp;Where | Type `orleans` in **From** and pick **Place d'Orléans Dr**. Type `carl` in **To** and pick **Carleton University**. | Suggestions filter as you type. A map preview appears when both are chosen, and **Next** unlocks. |
+| 2.&nbsp;When | Choose **Arrive by**. Press **Choose date** and pick October 6, 2026 in the calendar. Click the **hour** wheel and scroll or type `5`, then the **min** wheel and `30` (or click a value directly; on a phone, swipe or tap), then press **PM**. | The date and time controls only appear after you choose Arrive by or Leave at. A sentence repeats the goal back. |
+| 3.&nbsp;Services | Leave the recommended services, press **Next**. | Each option is explained in plain language. |
+| 4.&nbsp;Review | Press **Find my routes**. | **Error path:** no stop is within the 10-minute walking limit of Place d'Orléans Dr. |
 | Recovery | Press **Use this stop** (or **Change start location instead**). | The search runs again with every other answer kept, and the results appear. |
 | Results | The 4:30 PM → 5:28 PM route is already selected. Try **Arrive by 5:15 PM**, pick another route, or press **Explore route** (**Explore** on a phone). | Results update. The popup lists every walk, bus and train. |
 | Finish | In the popup press **Send to my phone** (or **Trip preview** first for the map). On a phone these are **Send** and **Preview**. | A confirmation with a reference code appears. **See what was sent** opens the saved route. |
