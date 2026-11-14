@@ -31,7 +31,7 @@ export default function RouteDetailsDialog({ itinerary, date, destination, timin
               Leave {formatTime(itinerary.leave)} <span aria-hidden="true">→</span>
               <span className="visually-hidden">, </span> Arrive {formatTime(itinerary.arrive)}
             </h2>
-            <IconButton aria-label="Close route details" onClick={onClose} sx={{ bgcolor: "primary.main", color: "#fff", "&:hover": { bgcolor: "primary.dark" } }} size="small">
+            <IconButton aria-label="Close route details" onClick={onClose} sx={{ bgcolor: "primary.main", color: "#fff", "&:hover": { bgcolor: "primary.dark" }, width: 36, height: 36 }}>
               <Close fontSize="small" />
             </IconButton>
           </div>
@@ -39,7 +39,7 @@ export default function RouteDetailsDialog({ itinerary, date, destination, timin
             {formatDateShort(date)} · {itinerary.arrive - itinerary.leave} min · walking {itinerary.walkMinutes} min · {timingNote}
           </p>
           <Timeline itinerary={itinerary} destination={destination} />
-          <div className="flex flex-wrap justify-between gap-3">
+          <div className="flex flex-wrap justify-between gap-3 max-sm:flex-col">
             <Button variant="contained" onClick={onPreview} disabled={sending}>
               Trip preview
             </Button>

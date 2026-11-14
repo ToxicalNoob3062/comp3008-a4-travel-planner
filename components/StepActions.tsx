@@ -19,25 +19,25 @@ interface StepActionsProps {
 export default function StepActions({ onBack, onNext, nextDisabled, hint, editing, extra }: StepActionsProps) {
   return (
     <>
-      <Button variant="outlined" size="large" startIcon={<ChevronLeft />} onClick={onBack}>
+      {/* The hint comes first on a phone (above the buttons) and sits beside Next on a wide screen. */}
+      <p id="next-hint" aria-live="polite" className="text-[13px] text-muted max-sm:order-first max-sm:empty:hidden sm:order-2 sm:ml-auto sm:min-h-5">
+        {nextDisabled ? hint : ""}
+      </p>
+      <Button className="sm:order-1" variant="outlined" size="large" startIcon={<ChevronLeft />} onClick={onBack}>
         Back
       </Button>
-      <div className="flex flex-wrap items-center justify-end gap-3">
-        <p id="next-hint" aria-live="polite" className="min-h-5 text-[13px] text-muted max-sm:basis-full max-sm:text-right">
-          {nextDisabled ? hint : ""}
-        </p>
-        {extra}
-        <Button
-          variant="contained"
-          size="large"
-          endIcon={<ChevronRight />}
-          onClick={onNext}
-          disabled={nextDisabled}
-          aria-describedby="next-hint"
-        >
-          {editing ? "Back to review" : "Next"}
-        </Button>
-      </div>
+      {extra ? <div className="flex flex-col sm:order-3">{extra}</div> : null}
+      <Button
+        className="sm:order-4"
+        variant="contained"
+        size="large"
+        endIcon={<ChevronRight />}
+        onClick={onNext}
+        disabled={nextDisabled}
+        aria-describedby="next-hint"
+      >
+        {editing ? "Back to review" : "Next"}
+      </Button>
     </>
   );
 }

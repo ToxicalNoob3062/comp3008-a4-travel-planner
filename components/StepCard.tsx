@@ -24,7 +24,7 @@ export default function StepCard({ title, step, headerAction, children, actions 
     >
       <div className="flex items-center gap-4">
         {/* tabIndex -1 lets the planner move keyboard focus here when the screen changes. */}
-        <h1 id="screen-title" tabIndex={-1} data-screen-heading className="flex-1 text-[28px] font-medium text-ink outline-none">
+        <h1 id="screen-title" tabIndex={-1} data-screen-heading className="flex-1 text-2xl font-medium text-ink outline-none sm:text-[28px]">
           {title}
         </h1>
         {step ? (
@@ -43,7 +43,8 @@ export default function StepCard({ title, step, headerAction, children, actions 
       {actions ? (
         <>
           <div className="min-h-px flex-1" />
-          <div className="flex flex-wrap items-center justify-between gap-3">{actions}</div>
+          {/* Phone: buttons stack full width, in the same order as on a wide screen. Wide: Back left, the rest right. */}
+          <div className="flex flex-wrap items-center gap-3 max-sm:flex-col max-sm:items-stretch sm:justify-between">{actions}</div>
         </>
       ) : null}
     </section>

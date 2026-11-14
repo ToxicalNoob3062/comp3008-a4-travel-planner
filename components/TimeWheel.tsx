@@ -137,8 +137,9 @@ export default function TimeWheel({ label, unit, side, options, value, onChange,
   const rounded = side === "left" ? "rounded-l-full" : "rounded-r-full";
   return (
     // The wrapper clips the list, which is wider than it, so the scrollbar is never visible in any browser.
+    // `overflow-clip` (not hidden) so the browser can never scroll the wrapper sideways and shift the band.
     // `group` lets the band, the chosen value and the unit change colour while the wheel has focus.
-    <div className="group relative w-[104px] overflow-hidden">
+    <div className="group relative w-[104px] overflow-clip">
       {/* The band marks the chosen value: grey normally, red while the wheel is focused. */}
       <div
         aria-hidden="true"

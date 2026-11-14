@@ -89,7 +89,7 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
                   </span>
                 </span>
               </label>
-              <Button className="relative" variant="outlined" size="small" onClick={() => dispatch({ type: "OPEN_DETAILS", id: route.id })} aria-label={`Explore route leaving ${formatTime(route.leave)}`}>
+              <Button className="relative max-sm:min-h-9" variant="outlined" size="small" onClick={() => dispatch({ type: "OPEN_DETAILS", id: route.id })} aria-label={`Explore route leaving ${formatTime(route.leave)}`}>
                 Explore route
               </Button>
             </FadeUp>

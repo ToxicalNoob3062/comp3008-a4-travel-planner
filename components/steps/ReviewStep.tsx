@@ -79,7 +79,7 @@ export default function ReviewStep({ state, dispatch, onSearch, onUseStop, onAdd
             <dd>
               <button
                 type="button"
-                className="press focus-ring flex cursor-pointer items-center gap-1 rounded-full px-2.5 py-1 text-sm font-medium text-brand hover:bg-brand-tint disabled:opacity-50"
+                className="press focus-ring flex cursor-pointer items-center gap-1 rounded-full px-2.5 py-2 text-sm font-medium text-brand hover:bg-brand-tint disabled:opacity-50"
                 onClick={() => dispatch({ type: "EDIT", step: row.step })}
                 disabled={searching}
                 aria-label={`Edit ${row.label.toLowerCase()}`}
