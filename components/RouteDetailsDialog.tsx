@@ -38,13 +38,32 @@ export default function RouteDetailsDialog({ itinerary, date, destination, timin
           <p className="text-[13px] text-muted sm:text-sm">
             {formatDateShort(date)} · {itinerary.arrive - itinerary.leave} min · walking {itinerary.walkMinutes} min · {timingNote}
           </p>
-          <Timeline itinerary={itinerary} destination={destination} />
-          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-between sm:gap-3">
-            <Button variant="contained" onClick={onPreview} disabled={sending}>
-              Trip preview
+          {/* A little extra room between the summary line and the timeline. */}
+          <div className="mt-2 sm:mt-0">
+            <Timeline itinerary={itinerary} destination={destination} />
+          </div>
+          {/* Phone: the two buttons share a row with short labels (the popup already says what is previewed or sent).
+              Wide: full labels at either end. Screen readers always get the full names. */}
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-between sm:gap-3">
+            <Button variant="contained" onClick={onPreview} disabled={sending} aria-label="Trip preview">
+              <span className="sm:hidden">Preview</span>
+              <span className="hidden sm:inline">Trip preview</span>
             </Button>
-            <Button variant="contained" onClick={onSend} disabled={sending} endIcon={sending ? <CircularProgress size={16} color="inherit" /> : null}>
-              {sending ? "Sending…" : "Send to my phone"}
+            <Button
+              variant="contained"
+              onClick={onSend}
+              disabled={sending}
+              aria-label={sending ? "Sending" : "Send to my phone"}
+              endIcon={sending ? <CircularProgress size={16} color="inherit" /> : null}
+            >
+              {sending ? (
+                "Sending…"
+              ) : (
+                <>
+                  <span className="sm:hidden">Send</span>
+                  <span className="hidden sm:inline">Send to my phone</span>
+                </>
+              )}
             </Button>
           </div>
         </div>
