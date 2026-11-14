@@ -137,8 +137,7 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
             </div>
           </div>
 
-          {/* Pops in just after the controls above it have risen into place. */}
-          <Pop className="-mt-3" delay={0.25}>
+          <Pop className="-mt-3">
           <Alert
             id="time-hint"
             severity="info"

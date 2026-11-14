@@ -22,6 +22,12 @@ export const SPRING = {
   drop: { type: "spring", stiffness: 520, damping: 30 },
 } as const;
 
+/**
+ * Every message box waits this long before it pops in. Because the wait is the same for all of them,
+ * boxes that appear together always bounce together, and the bounce starts once the screen has arrived.
+ */
+export const POP_DELAY = 0.25;
+
 /** Seconds between one item and the next in a staggered list. */
 export const STAGGER = 0.07;
 

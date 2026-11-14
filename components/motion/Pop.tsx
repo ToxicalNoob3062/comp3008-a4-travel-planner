@@ -5,23 +5,17 @@
 // Give it a `key` at the call site to make it pop again when its content changes.
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
-import { SPRING } from "./tokens";
+import { POP_DELAY, SPRING } from "./tokens";
 
-interface PopProps {
-  children: ReactNode;
-  className?: string;
-  /** Seconds to wait before popping in, for a box that should arrive after the content around it. */
-  delay?: number;
-}
-
-export default function Pop({ children, className, delay = 0 }: PopProps) {
+// There is deliberately no per-box timing option: every box uses POP_DELAY, so they stay in step.
+export default function Pop({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <motion.div
       data-motion="pop"
       className={className}
       initial={{ opacity: 0, y: 12, scale: 0.94 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ ...SPRING.pop, delay }}
+      transition={{ ...SPRING.pop, delay: POP_DELAY }}
     >
       {children}
     </motion.div>
