@@ -55,7 +55,9 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
           return (
             // Route cards arrive one after another, so the list reads top to bottom.
             <FadeUp
-              key={route.id}
+              // The requested time is part of the key, so an earlier/later search brings in a fresh,
+              // staggered list even when some of the same routes are in it.
+              key={`${time}-${route.id}`}
               order={i}
               delay={0.1}
               className={`flex flex-wrap items-center gap-3 rounded-lg px-4 py-3 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] ${
