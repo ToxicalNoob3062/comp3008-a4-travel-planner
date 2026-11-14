@@ -142,7 +142,7 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
             id="time-hint"
             severity="info"
             icon={<KeyboardOutlined fontSize="small" />}
-            sx={{ py: 0, alignItems: "center", fontSize: 13 }}
+            sx={{ py: 0, fontSize: 13 }}
           >
             Scroll a wheel or click a value. On a keyboard, select a wheel and type the number or use the arrow keys.
           </Alert>
