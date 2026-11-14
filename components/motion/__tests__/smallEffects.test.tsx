@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import DropIn from "../DropIn";
 import ScaleIn from "../ScaleIn";
@@ -22,9 +22,26 @@ describe("DropIn", () => {
     const panel = screen.getByText("calendar");
     expect(panel).toHaveAttribute("data-motion", "drop-in");
     expect(opacityOf(panel)).toBe(0);
-    expect(transformOf(panel)).toContain("translateY(-8px)");
+    expect(transformOf(panel)).toContain("translateY(-12px)");
     expect(panel.style.transformOrigin.split(" ").sort()).toEqual(["left", "top"]);
     await waitUntilSettled(panel);
+  });
+
+  it("fades out when closed and then reports that it has finished", async () => {
+    let closed = 0;
+    const { rerender } = renderWithMotion(<DropIn open>list</DropIn>);
+    const panel = screen.getByText("list");
+    await waitUntilSettled(panel);
+    rerender(<DropIn open={false} onClosed={() => closed++}>list</DropIn>);
+    await waitFor(() => expect(closed).toBe(1), { timeout: 3000 });
+    expect(opacityOf(panel)).toBe(0);
+  });
+
+  it("marks its contents as fresh only when asked, so options can arrive in turn once per opening", () => {
+    const { rerender } = renderWithMotion(<DropIn fresh>list</DropIn>);
+    expect(screen.getByText("list")).toHaveAttribute("data-fresh");
+    rerender(<DropIn>list</DropIn>);
+    expect(screen.getByText("list")).not.toHaveAttribute("data-fresh");
   });
 });
 

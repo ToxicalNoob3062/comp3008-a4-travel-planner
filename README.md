@@ -122,9 +122,9 @@ Each one marks its element with a `data-motion` attribute, which makes it easy t
 | `ScaleIn` | `scale-in` | Snaps a small element into view. | The check mark on the chosen Arrive by / Leave at card. |
 | `CheckDraw` | `check-draw` | The box bounces in, the tick draws itself and a ring bursts outward, only when the user ticks it. | The service checkboxes, through `AnimatedCheckbox`. |
 | `SelectionHighlight` | `selection` | The selected look glides from the old item to the new one. | The route cards on Results. |
-| `DropIn` | `drop-in` | Opens a panel downward from its control. | The calendar. |
+| `DropIn` | `drop-in` | Opens a panel downward from its control with a soft settle; with `open={false}` it fades out and reports when it has finished. | The calendar. |
 | `PopupTransition` | none (set in the theme) | Grows out from the centre with a slight overshoot, shrinks away faster. | Every dialog, starting with Route details. |
-| `DropInPaper` | `drop-in` | `DropIn` applied to a Material UI panel. | The place suggestions list. |
+| `DropInPopper` | `drop-in` | `DropIn` inside a Material UI popper: drops in on open, fades out on close, and lets the first options arrive one after another once per opening (not on every keystroke). | The place suggestions list. |
 | `.press` (CSS class) and the MUI button theme | none | Presses the control down slightly while it is clicked. | Every button, pill and choice card. |
 
 ## Screen sizes
@@ -164,7 +164,7 @@ npm test
 | `motion/__tests__/ProgressBar.test.tsx` | ARIA values, fills the new segment going forward, drains going back, resets for a new trip, fills gradually. |
 | `motion/__tests__/ScreenTransition.test.tsx` | First screen does not slide or take focus; Next arrives from the right and Back from the left; focus moves to the new heading; one screen at a time. |
 | `motion/__tests__/PopupTransition.test.tsx` | Dialog opens with the shared timing and easing, closes faster, then is removed. |
-| `motion/__tests__/smallEffects.test.tsx` | `ScaleIn`, `DropIn` and `SelectionHighlight` (one highlight, on the selected item only). |
+| `motion/__tests__/smallEffects.test.tsx` | `ScaleIn`, `DropIn` (opens from above, fades out and reports closing, marks fresh contents) and `SelectionHighlight` (one highlight, on the selected item only). |
 | `motion/__tests__/tokens.test.ts` | Guard rails on the timing values (leaving is faster than arriving, nothing longer than 0.6 s, and so on). |
 | `__tests__/AnimatedCheckbox.test.tsx` | Pre-checked boxes do not animate, ticking plays the celebration, keyboard works, the tick is hidden from screen readers. |
 | `__tests__/TimeWheel.test.tsx` | Nothing chosen at first, typing one or two digits, arrow/Home/End/Page keys, limits, Backspace, Escape, click, scroll. |

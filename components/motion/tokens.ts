@@ -27,6 +27,20 @@ export const SPRING = {
   drop: { type: "spring", stiffness: 520, damping: 30 },
 } as const;
 
+/** Dropdown panels (calendar, place suggestions). Kept gentle: the place list reopens often while typing. */
+export const DROP = {
+  /** How far (px) the panel drops as it opens. */
+  distance: 12,
+  /** Its size at the start of the drop. */
+  scale: 0.97,
+  /** Soft settle, no bounce. */
+  spring: { type: "spring", stiffness: 380, damping: 30 },
+  /** Seconds for the closing fade. Short, so closing never feels held up. */
+  closeSeconds: 0.14,
+  /** Milliseconds after opening during which the options arrive one after another. */
+  freshMs: 450,
+} as const;
+
 /**
  * Every message box waits this long before it pops in. Because the wait is the same for all of them,
  * boxes that appear together always bounce together, and the bounce starts once the screen has arrived.
