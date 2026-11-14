@@ -10,6 +10,7 @@ import AccessTime from "@mui/icons-material/AccessTime";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import Flag from "@mui/icons-material/Flag";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
+import KeyboardOutlined from "@mui/icons-material/KeyboardOutlined";
 import RadioButtonUnchecked from "@mui/icons-material/RadioButtonUnchecked";
 import DateField from "@/components/DateField";
 import StepActions from "@/components/StepActions";
@@ -119,9 +120,14 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
             </div>
           </div>
 
-          <p id="time-hint" className="-mt-3 text-[13px] text-muted">
-            Time: scroll a wheel or click a value. With the keyboard, select a wheel and type the number or use the arrow keys.
-          </p>
+          <Alert
+            id="time-hint"
+            severity="info"
+            icon={<KeyboardOutlined fontSize="small" />}
+            sx={{ mt: -1.5, py: 0, alignItems: "center", fontSize: 13 }}
+          >
+            Scroll a wheel or click a value. On a keyboard, select a wheel and type the number or use the arrow keys.
+          </Alert>
 
           {/* The system repeats the goal back in plain words so a wrong setting is noticed here.
               Its space is reserved so the buttons below do not move when it appears. */}
