@@ -42,10 +42,11 @@ export default function WhereStep({ state, dispatch }: { state: PlannerState; di
       </div>
 
       {/* The map area is always present, so the buttons below do not jump when the map appears. */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2 sm:gap-3">
         <h2 className="text-base font-semibold text-ink">Trip preview</h2>
         {from && to && !samePlace ? (
           <MapView
+            className="h-[170px] sm:h-[220px]"
             description={`Map preview. A marks your start, ${from.name}. B marks your destination, ${to.name}.`}
             markers={[
               { position: [from.lat, from.lon], letter: "A", label: `Start: ${from.name}` },
@@ -53,7 +54,7 @@ export default function WhereStep({ state, dispatch }: { state: PlannerState; di
             ]}
           />
         ) : (
-          <p className="flex h-[220px] items-center justify-center rounded-lg border border-dashed border-line bg-[#fafafa] px-6 text-center text-sm text-muted">
+          <p className="flex h-[170px] items-center sm:h-[220px] justify-center rounded-lg border border-dashed border-line bg-[#fafafa] px-6 text-center text-sm text-muted">
             A map of your trip appears here once you choose a start and a destination.
           </p>
         )}

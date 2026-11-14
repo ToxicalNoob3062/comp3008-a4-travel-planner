@@ -22,7 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               Skip to the trip planner
             </a>
             <AppBar />
-            <main id="main" className="flex flex-1 flex-col items-center px-4 py-6 sm:px-10">
+            <main id="main" className="flex flex-1 flex-col items-center bg-white sm:bg-transparent sm:px-10 sm:py-6">
               {children}
             </main>
           </Providers>

@@ -45,13 +45,47 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
           Edit trip
         </Button>
       }
+      footer={
+        send.status === "sent" ? (
+          <Button variant="outlined" size="large" fullWidth onClick={onReset}>
+            Plan another trip
+          </Button>
+        ) : (
+          // Phone: the two buttons sit side by side in the bar at the bottom of the screen, always in reach.
+          <div className="flex flex-col gap-1.5 sm:gap-3">
+            <p className="text-xs text-muted sm:text-sm">Not quite right? Search 15 minutes earlier or later.</p>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                className="!px-2 !text-[13px] !leading-tight sm:!px-[22px] sm:!text-[15px]"
+                variant="contained"
+                size="large"
+                startIcon={<ChevronLeft />}
+                disabled={busy || time - SHIFT_MINUTES < 0}
+                onClick={() => onShift(-SHIFT_MINUTES)}
+              >
+                {shiftLabel(mode, time - SHIFT_MINUTES)}
+              </Button>
+              <Button
+                className="!px-2 !text-[13px] !leading-tight sm:!px-[22px] sm:!text-[15px]"
+                variant="contained"
+                size="large"
+                endIcon={<ChevronRight />}
+                disabled={busy || time + SHIFT_MINUTES > 1439}
+                onClick={() => onShift(SHIFT_MINUTES)}
+              >
+                {shiftLabel(mode, time + SHIFT_MINUTES)}
+              </Button>
+            </div>
+          </div>
+        )
+      }
     >
-      <p className="-mt-3 text-sm text-muted">
+      <p className="-mt-3 text-[13px] text-muted sm:text-sm">
         {formatDateShort(state.date)} · {origin} → {state.to?.name}
       </p>
 
       <LayoutMotion>
-      <fieldset className="flex flex-col gap-3" aria-busy={busy}>
+      <fieldset className="flex flex-col gap-2 sm:gap-3" aria-busy={busy}>
         <legend className="visually-hidden">Choose a route</legend>
         {state.results.map((route, i) => {
           const selected = route.id === state.selectedId;
@@ -64,33 +98,41 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
               order={i}
               delay={0.1}
               // Every card has the same size and border; the selected look is a separate layer that slides between cards.
-              className={`relative flex flex-wrap items-center gap-3 rounded-lg border bg-white px-4 py-3 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] ${
+              className={`relative flex flex-wrap items-center gap-3 rounded-lg border bg-white px-3 py-2.5 sm:px-4 sm:py-3 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] ${
                 selected ? "border-transparent" : "border-line hover:border-ink"
               }`}
             >
               {selected ? <SelectionHighlight group="route" className="rounded-lg border-2 border-brand bg-brand-tint" /> : null}
-              <label className="relative flex min-w-[220px] flex-1 cursor-pointer items-start gap-3">
+              <label className="relative flex min-w-[220px] flex-1 cursor-pointer items-start gap-2.5 sm:gap-3">
                 <input
                   type="radio"
                   name="route"
-                  className="mt-1.5 size-4 accent-[#d30f1d]"
+                  className="mt-1 size-4 accent-[#d30f1d] sm:mt-1.5"
                   checked={selected}
                   onChange={() => dispatch({ type: "SELECT_ROUTE", id: route.id })}
                 />
                 <span className="flex flex-col gap-0.5">
-                  <span className="text-lg font-medium text-ink">
+                  <span className="text-base font-medium text-ink sm:text-lg">
                     Leave {formatTime(route.leave)} <span aria-hidden="true">→</span>
                     <span className="visually-hidden">, </span> Arrive {formatTime(route.arrive)}
                   </span>
-                  <span className="text-[13px] text-muted">{route.summary}</span>
-                  <span className="text-[13px] font-medium text-[#1b5e20]">
+                  {/* Phone: room is left on the right of these two lines for the Explore button. */}
+                  <span className="pr-24 text-[13px] text-muted sm:pr-0">{route.summary}</span>
+                  <span className="pr-24 text-[13px] font-medium text-[#1b5e20] sm:pr-0">
                     {timingNote(route, mode)}
                     {route.id === bestId ? (mode === "arrive" ? ` · closest to ${formatTime(time)}` : " · arrives first") : ""}
                   </span>
                 </span>
               </label>
-              <Button className="relative max-sm:min-h-9" variant="outlined" size="small" onClick={() => dispatch({ type: "OPEN_DETAILS", id: route.id })} aria-label={`Explore route leaving ${formatTime(route.leave)}`}>
-                Explore route
+              {/* Phone: a compact button in the card's bottom-right corner, so a route is three lines tall. Wide: beside the text. */}
+              <Button
+                className="!absolute right-1.5 bottom-1.5 !min-h-9 sm:!relative sm:right-auto sm:bottom-auto sm:!min-h-0"
+                variant="outlined"
+                size="small"
+                onClick={() => dispatch({ type: "OPEN_DETAILS", id: route.id })}
+                aria-label={`Explore route leaving ${formatTime(route.leave)}`}
+              >
+                Explore<span className="hidden sm:inline">&nbsp;route</span>
               </Button>
             </FadeUp>
           );
@@ -98,14 +140,14 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
       </fieldset>
       </LayoutMotion>
 
-      <div aria-live="polite" className="flex flex-col gap-3">
+      <div aria-live="polite" className="contents">
         {state.notice ? (
           <Pop key={state.notice}>
             <Alert severity="warning">{state.notice}</Alert>
           </Pop>
         ) : null}
         {send.status === "sent" && sentRoute ? (
-          <Pop>
+          <Pop stay>
           <Alert severity="success">
             <AlertTitle sx={{ fontWeight: 500 }}>Route sent to your phone</AlertTitle>
             Leave {formatTime(sentRoute.leave)} from {state.from?.name}, arrive {formatTime(sentRoute.arrive)} ({timingNote(sentRoute, mode)}).
@@ -139,38 +181,6 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
         ) : null}
       </div>
 
-      <div className="min-h-px flex-1" />
-      {send.status === "sent" ? (
-        <Button variant="outlined" size="large" fullWidth onClick={onReset}>
-          Plan another trip
-        </Button>
-      ) : (
-        <div className="flex flex-col gap-3">
-          <p className="text-sm text-muted">Not quite right?</p>
-          <div className="flex flex-wrap gap-2">
-            <Button
-              className="min-w-[200px] flex-1"
-              variant="contained"
-              size="large"
-              startIcon={<ChevronLeft />}
-              disabled={busy || time - SHIFT_MINUTES < 0}
-              onClick={() => onShift(-SHIFT_MINUTES)}
-            >
-              {shiftLabel(mode, time - SHIFT_MINUTES)}
-            </Button>
-            <Button
-              className="min-w-[200px] flex-1"
-              variant="contained"
-              size="large"
-              endIcon={<ChevronRight />}
-              disabled={busy || time + SHIFT_MINUTES > 1439}
-              onClick={() => onShift(SHIFT_MINUTES)}
-            >
-              {shiftLabel(mode, time + SHIFT_MINUTES)}
-            </Button>
-          </div>
-        </div>
-      )}
     </StepCard>
   );
 }

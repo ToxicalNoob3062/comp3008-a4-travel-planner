@@ -38,7 +38,7 @@ export default function TripPreview({ itinerary, from, to, date, sending, onBack
         </>
       }
     >
-      <p className="-mt-3 text-sm text-muted">
+      <p className="-mt-3 text-[13px] text-muted sm:text-sm">
         {formatDateShort(date)} · Leave {formatTime(itinerary.leave)} → Arrive {formatTime(itinerary.arrive)} · {itinerary.summary}
       </p>
       <div className="flex flex-col gap-5 md:flex-row">
@@ -47,7 +47,7 @@ export default function TripPreview({ itinerary, from, to, date, sending, onBack
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <MapView
-            className="h-[340px]"
+            className="h-[220px] sm:h-[340px]"
             description={`Map of the route from ${from.name} (A) to ${to.name} (B). The same steps are listed beside the map.`}
             markers={markers}
             lines={lines}

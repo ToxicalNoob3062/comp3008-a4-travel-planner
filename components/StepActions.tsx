@@ -19,16 +19,17 @@ interface StepActionsProps {
 export default function StepActions({ onBack, onNext, nextDisabled, hint, editing, extra }: StepActionsProps) {
   return (
     <>
-      {/* The hint comes first on a phone (above the buttons) and sits beside Next on a wide screen. */}
-      <p id="next-hint" aria-live="polite" className="text-[13px] text-muted max-sm:order-first max-sm:empty:hidden sm:order-2 sm:ml-auto sm:min-h-5">
+      {/* Phone order: hint, extra button (full width), then Back and Next side by side.
+          Wide order: Back, hint, extra, Next in one row. */}
+      <p id="next-hint" aria-live="polite" className="order-1 col-span-2 text-[13px] text-muted max-sm:empty:hidden sm:order-2 sm:ml-auto sm:min-h-5">
         {nextDisabled ? hint : ""}
       </p>
-      <Button className="sm:order-1" variant="outlined" size="large" startIcon={<ChevronLeft />} onClick={onBack}>
+      <Button className="order-3 sm:order-1" variant="outlined" size="large" startIcon={<ChevronLeft />} onClick={onBack}>
         Back
       </Button>
-      {extra ? <div className="flex flex-col sm:order-3">{extra}</div> : null}
+      {extra ? <div className="order-2 col-span-2 flex flex-col sm:order-3">{extra}</div> : null}
       <Button
-        className="sm:order-4"
+        className="order-4"
         variant="contained"
         size="large"
         endIcon={<ChevronRight />}

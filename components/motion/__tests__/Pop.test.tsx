@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import Pop from "../Pop";
 import { opacityOf, renderWithMotion, transformOf, waitUntilSettled } from "@/test/motion";
@@ -70,5 +70,40 @@ describe("Pop", () => {
     clearInterval(watch);
     // The position changes in one step (start -> rest) with no frames in between, so nothing travels or overshoots.
     expect([...seen].filter((value) => value !== start && value !== "none")).toEqual([]);
+  });
+
+  it("fades away by itself and leaves the page once its time is up", async () => {
+    renderWithMotion(<Pop visibleMs={150}>Tip</Pop>);
+    expect(screen.getByText("Tip")).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText("Tip")).not.toBeInTheDocument(), { timeout: 3000 });
+  });
+
+  it("closes its height on the way out, so what is below slides up", async () => {
+    renderWithMotion(<Pop visibleMs={50}>Tip</Pop>);
+    const box = screen.getByText("Tip");
+    let sawClosing = false;
+    const watch = setInterval(() => {
+      if (box.style.height !== "" && box.style.height !== "auto") sawClosing = true;
+    }, 4);
+    await waitFor(() => expect(screen.queryByText("Tip")).not.toBeInTheDocument(), { timeout: 3000 });
+    clearInterval(watch);
+    expect(sawClosing).toBe(true);
+  });
+
+  it("stays on screen when told to (errors with a fix, confirmations with a link)", async () => {
+    renderWithMotion(<Pop stay visibleMs={50}>Route sent</Pop>);
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    expect(screen.getByText("Route sent")).toBeInTheDocument();
+  });
+
+  it("waits while the pointer is on it, then starts counting again", async () => {
+    const user = (await import("@testing-library/user-event")).default.setup();
+    renderWithMotion(<Pop visibleMs={150}>Tip</Pop>);
+    const box = screen.getByText("Tip");
+    await user.hover(box);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    expect(box).toBeInTheDocument();
+    await user.unhover(box);
+    await waitFor(() => expect(screen.queryByText("Tip")).not.toBeInTheDocument(), { timeout: 3000 });
   });
 });

@@ -22,10 +22,17 @@ const theme = createTheme({
   components: {
     // Even out the lines in every alert box so a single word is never left alone on the last line.
     // Rounder corners on every alert box (the same 10px as the choice cards and the suggested-fix card).
-    // The icon sits in the vertical middle of the box, however many lines of text there are.
+    // A box with a heading: the icon lines up with the heading line, however much text follows.
+    // A box without a heading: the icon sits in the vertical middle of the box.
     MuiAlert: {
       styleOverrides: {
-        root: { borderRadius: 10, alignItems: "center" },
+        root: {
+          borderRadius: 10,
+          alignItems: "center",
+          "&:has(.MuiAlertTitle-root)": { alignItems: "flex-start" },
+          // 7px puts the 22px icon on the centre of the 24px heading line.
+          "&:has(.MuiAlertTitle-root) .MuiAlert-icon": { paddingTop: 7 },
+        },
         icon: { paddingTop: 0, paddingBottom: 0 },
         message: { textWrap: "balance" },
       },

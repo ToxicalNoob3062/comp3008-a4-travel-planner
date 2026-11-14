@@ -57,17 +57,19 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
         />
       }
     >
-      <fieldset className="flex flex-col gap-4 sm:flex-row">
+      <fieldset className="grid grid-cols-2 gap-2 sm:flex sm:gap-4">
         <legend className="visually-hidden">Do you need to arrive by a time or leave at a time?</legend>
         {CHOICES.map(({ mode: choice, title, text, Icon }) => {
           const selected = mode === choice;
           return (
             <label
               key={choice}
-              className={`press flex flex-1 cursor-pointer items-center gap-4 rounded-[10px] px-5 py-[18px] has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] ${
+              // Phone: two compact cards side by side (no icon tile). Wide: two roomy cards in a row.
+              // The border is always 2px, so choosing a card never changes its size.
+              className={`press flex flex-1 cursor-pointer items-center gap-2 rounded-[10px] border-2 px-3 py-2.5 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2] sm:gap-4 sm:px-5 sm:py-[18px] ${
                 selected
-                  ? "border-2 border-brand bg-brand-tint shadow-[0_4px_12px_rgba(212,15,28,0.18)]"
-                  : "border border-[#dcdcdf] bg-white p-[19px] hover:border-ink"
+                  ? "border-brand bg-brand-tint shadow-[0_4px_12px_rgba(212,15,28,0.18)]"
+                  : "border-[#dcdcdf] bg-white hover:border-ink"
               }`}
             >
               <input
@@ -78,12 +80,12 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
                 onChange={() => dispatch({ type: "SET_MODE", mode: choice })}
                 className="visually-hidden"
               />
-              <span className={`flex size-11 shrink-0 items-center justify-center rounded-[10px] ${selected ? "bg-brand text-white" : "bg-[#f2f2f4] text-ink"}`}>
+              <span className={`hidden size-11 shrink-0 items-center sm:flex justify-center rounded-[10px] ${selected ? "bg-brand text-white" : "bg-[#f2f2f4] text-ink"}`}>
                 <Icon aria-hidden="true" />
               </span>
               <span className="flex flex-1 flex-col gap-0.5">
-                <span className={`text-lg font-semibold ${selected ? "text-brand" : "text-ink"}`}>{title}</span>
-                <span className="text-sm text-[#6b6a70]">{text}</span>
+                <span className={`text-base font-semibold sm:text-lg ${selected ? "text-brand" : "text-ink"}`}>{title}</span>
+                <span className="text-xs text-[#6b6a70] sm:text-sm">{text}</span>
               </span>
               {selected ? (
                 // The check mark pops in to confirm the choice.
@@ -100,11 +102,12 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
 
       {mode ? (
         // The date and time controls rise into place once Arrive by / Leave at is chosen.
-        <FadeUp className="flex flex-col gap-6">
-          <div className="flex flex-wrap items-start justify-between gap-x-5 gap-y-4">
+        <FadeUp className="flex flex-col gap-4 [--gap:1rem] sm:gap-6 sm:[--gap:1.5rem]">
+          {/* Phone: the date takes a full row, then the time wheels and AM/PM share the next row. Wide: all in one row. */}
+          <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1 sm:gap-x-5 sm:gap-y-4">
             <DateField
               label="Date"
-              className="w-[210px] max-sm:w-full sm:mt-10"
+              className="w-full sm:mt-10 sm:w-[210px]"
               value={date}
               onChange={(value) => dispatch({ type: "SET_FIELD", field: "date", value })}
             />
@@ -113,7 +116,7 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
               <TimeWheel describedBy="time-hint" label="Minute" unit="min" side="right" options={MINUTES} value={minute} onChange={(value) => dispatch({ type: "SET_FIELD", field: "minute", value })} />
             </div>
             {/* One pill with two halves, in the same style as the date and time pills. */}
-            <div role="group" aria-label="AM or PM" className="flex h-10 sm:mt-10">
+            <div role="group" aria-label="AM or PM" className="flex h-10 min-[372px]:mt-10">
               {(["AM", "PM"] as Meridiem[]).map((value, i) => {
                 const pressed = meridiem === value;
                 return (
@@ -137,22 +140,23 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
             </div>
           </div>
 
-          <Pop className="-mt-3">
-          <Alert
-            id="time-hint"
-            severity="info"
-            icon={<KeyboardOutlined fontSize="small" />}
-            sx={{ py: 0, fontSize: 13 }}
-          >
-            Click a wheel, then scroll, type the number or use the arrow keys. You can also click a value directly.
+          {/* The wheels point at this text for screen readers; it stays after the visible tip has faded away. */}
+          <p id="time-hint" className="visually-hidden">
+            Scroll or swipe the wheel, type the number, or use the arrow keys.
+          </p>
+          <Pop className="-mt-2 sm:-mt-3">
+          <Alert severity="info" icon={<KeyboardOutlined fontSize="small" />} sx={{ py: 0, fontSize: 13 }}>
+            {/* The tip matches the device: touch screens swipe, a mouse and keyboard click and type. */}
+            <span className="pointer-coarse:hidden">Click a wheel, then scroll, type the number or use the arrow keys. You can also click a value directly.</span>
+            <span className="hidden pointer-coarse:inline">Swipe a wheel up or down, or tap a value.</span>
           </Alert>
           </Pop>
 
           {/* The system repeats the goal back in plain words so a wrong setting is noticed here.
-              Its space is reserved so the buttons below do not move when it appears. */}
-          <div aria-live="polite" className="min-h-[78px]">
+              It pops in again whenever the date or time changes, then fades away like the other notes. */}
+          <div aria-live="polite" className="contents">
             {complete && time !== null ? (
-              <Pop>
+              <Pop key={`${mode}-${date}-${time}`}>
               <Alert severity="info" icon={<InfoOutlined color="primary" />} sx={{ bgcolor: "#f5f5f5", color: "text.primary" }}>
                 <AlertTitle sx={{ fontWeight: 500, mb: 0.5 }}>
                   {mode === "arrive"

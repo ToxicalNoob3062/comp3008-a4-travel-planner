@@ -117,7 +117,7 @@ Each one marks its element with a `data-motion` attribute, which makes it easy t
 | `MotionProvider`, `LayoutMotion` | none | Load Motion's features (see Performance). | `app/providers.tsx`, the Results screen. |
 | `ScreenTransition` | `screen` | Slides a screen in from the direction of travel (Next from the right, Back from the left) and moves focus to its heading. | Every step change, in `TripPlanner`. |
 | `ProgressBar` | `progress` | Fills the next segment going forward, drains it going back. | The four-step bar in `StepCard`. |
-| `Pop` | `pop` | Rises and settles with one soft bounce, then stays still. | Tips, warnings, errors, the goal sentence, the "Route sent" confirmation. |
+| `Pop` | `pop` | Rises and settles with one soft bounce. Tips, notes and warnings then fade out after 5 seconds and close their space; boxes marked `stay` remain. | Tips, warnings, errors, the goal sentence, the "Route sent" confirmation. |
 | `FadeUp` | `fade-up` | Fades and moves into place; `order` staggers a list, `from="left"` slides sideways, `as="li"` renders a list item. | Route cards, route steps, the start screen, the date and time row. |
 | `ScaleIn` | `scale-in` | Snaps a small element into view. | The check mark on the chosen Arrive by / Leave at card. |
 | `CheckDraw` | `check-draw` | The box bounces in, the tick draws itself and a ring bursts outward, only when the user ticks it. | The service checkboxes, through `AnimatedCheckbox`. |
@@ -129,13 +129,23 @@ Each one marks its element with a `data-motion` attribute, which makes it easy t
 
 ## Screen sizes
 
-Checked at phone (375 px), tablet (768 px) and desktop widths. No screen scrolls sideways.
+The layout is written phone-first with Tailwind: a class with no prefix is the phone layout, and `sm:` (640 px and
+wider) changes it for larger screens. Checked on an iPhone simulator (402 pt wide), at tablet width (768 px) and on
+desktop. No screen scrolls sideways.
 
-- **Phone:** the action buttons stack full width in the same order as on desktop, with the hint above them; the start
-  picture scales and its labels move with it; the date, time and AM/PM pills each take their own row; tap targets are at
-  least 36 px tall.
+- **Phone, no card:** the white surface fills the screen edge to edge, so all the width goes to content. From 640 px it
+  becomes the centred card. Both layouts come from one shared class list (`components/screenCard.ts`).
+- **Buttons always in reach:** on a phone the main buttons sit in a bar fixed to the bottom of the screen. Back (small)
+  and the main button share one row; an extra button such as "Use recommended" takes a full row above them.
+- **Less scrolling:** smaller type and spacing on a phone, the two "Arrive by / Leave at" cards side by side, the time
+  wheels and AM/PM on one row, and route cards three lines tall with a compact "Explore" button. Every step and the
+  results list fit on one phone screen without scrolling.
+- **Review:** on a phone each row's edit control is a pencil icon (40 px tap target, named for screen readers).
+- **Notes fade away:** tips, notes and warnings disappear by themselves after 5 seconds (they pause while the pointer
+  is on them). Errors that need an action and the "Route sent" confirmation stay.
 - **Time wheels with a mouse:** a wheel scrolls only while it has focus (after a click or Tab). Scrolling the page with
-  the pointer over a wheel therefore cannot change the time by accident. On touch screens the wheel is dragged directly.
+  the pointer over a wheel therefore cannot change the time by accident. On touch screens the wheel is dragged directly,
+  and the tip under the wheels changes its wording to match.
 
 ## Tests
 
@@ -148,7 +158,7 @@ npm test
 
 | Test file | What it checks |
 | --- | --- |
-| `motion/__tests__/Pop.test.tsx` | Starts hidden and small, ends at rest, overshoots once (the bounce), two boxes stay exactly in step, no sliding with reduced motion. |
+| `motion/__tests__/Pop.test.tsx` | Starts hidden and small, ends at rest, overshoots once (the bounce), two boxes stay exactly in step, no sliding with reduced motion, fades away and closes its height when its time is up, stays when told to, waits while the pointer is on it. |
 | `motion/__tests__/FadeUp.test.tsx` | Start and end positions, `from="left"`, list items arrive in order, `delay`, list-item mode, screen-reader attributes, reduced motion. |
 | `motion/__tests__/ProgressBar.test.tsx` | ARIA values, fills the new segment going forward, drains going back, resets for a new trip, fills gradually. |
 | `motion/__tests__/ScreenTransition.test.tsx` | First screen does not slide or take focus; Next arrives from the right and Back from the left; focus moves to the new heading; one screen at a time. |

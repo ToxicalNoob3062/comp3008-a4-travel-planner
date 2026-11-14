@@ -23,6 +23,7 @@ export default function ServicesStep({ state, dispatch }: { state: PlannerState;
           onBack={() => dispatch({ type: "GO", screen: state.editing ? "review" : "when" })}
           onNext={() => dispatch({ type: "GO", screen: "review" })}
           nextDisabled={!complete}
+          hint="Choose at least one service to continue."
           extra={
             <Button variant="outlined" size="large" onClick={() => dispatch({ type: "USE_RECOMMENDED" })}>
               Use recommended
@@ -41,7 +42,7 @@ export default function ServicesStep({ state, dispatch }: { state: PlannerState;
               slotProps={{ input: { "aria-describedby": `service-${option.id}` } }}
             />
             <span className="flex flex-col gap-0.5 pt-2">
-              <span className="text-base text-ink">{option.label}</span>
+              <span className="text-[15px] text-ink sm:text-base">{option.label}</span>
               <span id={`service-${option.id}`} className="text-[13px] text-muted">
                 {option.description}
               </span>
@@ -50,9 +51,11 @@ export default function ServicesStep({ state, dispatch }: { state: PlannerState;
         ))}
       </fieldset>
 
-      <div aria-live="polite">
-        {/* The key makes the box pop again when it switches between the note and the error. */}
-        <Pop key={complete ? "note" : "error"}>
+      {/* `contents`: the wrapper only announces changes; the box itself is the card's child, so its gap closes with it. */}
+      <div aria-live="polite" className="contents">
+        {/* The key makes the box pop again when it switches between the note and the error.
+            The note fades away by itself; the error stays until a service is chosen. */}
+        <Pop key={complete ? "note" : "error"} stay={!complete}>
           {complete ? (
             <Alert severity="warning">Unchecking a service removes those trips from your results.</Alert>
           ) : (

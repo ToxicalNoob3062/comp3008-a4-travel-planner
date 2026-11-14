@@ -9,6 +9,7 @@ import { getSavedTrip } from "@/lib/db";
 import { timingNote } from "@/lib/labels";
 import { formatDate, formatTime } from "@/lib/time";
 import { tripFromLink } from "@/lib/tripLink";
+import { SCREEN_CARD } from "@/components/screenCard";
 
 function readSavedTrip(code: string) {
   try {
@@ -38,7 +39,7 @@ async function SavedTripCard({ params, searchParams }: Pick<PageProps<"/trip/[co
   return (
     <>
       <p className="text-sm font-medium text-brand">Sent to your phone · Reference {trip.code}</p>
-      <h1 className="text-[28px] font-medium text-ink">
+      <h1 className="text-xl font-medium text-ink sm:text-[28px]">
         Leave {formatTime(itinerary.leave)} → Arrive {formatTime(itinerary.arrive)}
       </h1>
       <p className="text-sm text-muted">
@@ -50,7 +51,7 @@ async function SavedTripCard({ params, searchParams }: Pick<PageProps<"/trip/[co
         <div className="flex flex-col gap-2">
           <h2 className="text-base font-semibold text-ink">Map of your route</h2>
           <MapView
-            className="h-[320px]"
+            className="h-[240px] sm:h-[320px]"
             description={`Map of the route from ${trip.fromName} (A) to ${trip.toName} (B). The same steps are listed above.`}
             markers={map.markers}
             lines={map.lines}
@@ -64,7 +65,7 @@ async function SavedTripCard({ params, searchParams }: Pick<PageProps<"/trip/[co
 
 export default function TripPage({ params, searchParams }: PageProps<"/trip/[code]">) {
   return (
-    <section className="flex w-full max-w-[760px] flex-col gap-5 rounded-xl border border-line bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.06)] sm:p-8">
+    <section className={`${SCREEN_CARD} sm:min-h-0`}>
       <Suspense fallback={<p className="text-muted">Loading your route…</p>}>
         <SavedTripCard params={params} searchParams={searchParams} />
       </Suspense>

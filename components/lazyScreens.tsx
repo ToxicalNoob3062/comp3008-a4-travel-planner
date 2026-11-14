@@ -3,15 +3,12 @@
 // Every screen after the start screen is loaded on demand, so the first page only downloads what it shows.
 // To keep clicks instant, `preloadScreens()` fetches them all in the background as soon as the browser is idle.
 import dynamic from "next/dynamic";
+import { SCREEN_CARD } from "@/components/screenCard";
 
 /** Shown for the moment a screen's code is still arriving (normally never seen, because of the preload). */
 function ScreenLoading() {
   return (
-    <section
-      aria-busy="true"
-      aria-label="Loading"
-      className="min-h-[600px] w-full max-w-[760px] rounded-xl border border-line bg-white shadow-[0_4px_16px_rgba(0,0,0,0.06)]"
-    />
+    <section aria-busy="true" aria-label="Loading" className={SCREEN_CARD} />
   );
 }
 

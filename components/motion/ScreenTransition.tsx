@@ -46,7 +46,7 @@ function Screen({ direction, children }: { direction: number; children: ReactNod
       initial={firstScreenShown ? "enter" : false}
       animate="center"
       exit="exit"
-      className="flex w-full flex-col items-center"
+      className="flex w-full flex-1 flex-col items-center"
     >
       {children}
     </m.div>

@@ -73,19 +73,20 @@ export default function ReviewStep({ state, dispatch, onSearch, onUseStop, onAdd
     >
       <dl className="flex flex-col">
         {rows.map((row) => (
-          <div key={row.label} className="flex items-center gap-4 border-b border-line py-3.5">
-            <dt className="w-[90px] shrink-0 text-sm text-muted sm:w-[110px]">{row.label}</dt>
-            <dd className="min-w-px flex-1 text-base font-medium text-ink">{row.value}</dd>
+          <div key={row.label} className="flex items-center gap-3 border-b border-line py-2 sm:gap-4 sm:py-3.5">
+            <dt className="w-[68px] shrink-0 text-[13px] text-muted sm:w-[110px] sm:text-sm">{row.label}</dt>
+            <dd className="min-w-px flex-1 text-[15px] font-medium text-ink sm:text-base">{row.value}</dd>
             <dd>
               <button
                 type="button"
-                className="press focus-ring flex cursor-pointer items-center gap-1 rounded-full px-2.5 py-2 text-sm font-medium text-brand hover:bg-brand-tint disabled:opacity-50"
+                className="press focus-ring flex size-10 cursor-pointer items-center justify-center gap-1 rounded-full text-sm font-medium text-brand hover:bg-brand-tint disabled:opacity-50 sm:size-auto sm:px-2.5 sm:py-2"
                 onClick={() => dispatch({ type: "EDIT", step: row.step })}
                 disabled={searching}
                 aria-label={`Edit ${row.label.toLowerCase()}`}
               >
-                <EditOutlined aria-hidden="true" sx={{ fontSize: 16 }} />
-                Edit
+                {/* Phone: the pencil alone (the button is named for screen readers). Wide: pencil and the word. */}
+                <EditOutlined aria-hidden="true" className="!text-[20px] sm:!text-[16px]" />
+                <span className="hidden sm:inline">Edit</span>
               </button>
             </dd>
           </div>
@@ -94,7 +95,7 @@ export default function ReviewStep({ state, dispatch, onSearch, onUseStop, onAdd
 
       <div ref={errorRef} tabIndex={-1} role="alert" className="outline-none">
         {error ? (
-          <Pop key={error.code}>
+          <Pop key={error.code} stay>
           <SearchErrorPanel
             error={error}
             busy={searching}

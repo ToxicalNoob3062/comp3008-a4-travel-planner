@@ -23,11 +23,11 @@ interface RouteDetailsDialogProps {
 
 export default function RouteDetailsDialog({ itinerary, date, destination, timingNote, sending, onClose, onPreview, onSend }: RouteDetailsDialogProps) {
   return (
-    <Dialog open={!!itinerary} onClose={onClose} aria-labelledby="route-details-title" maxWidth="sm" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
+    <Dialog open={!!itinerary} onClose={onClose} aria-labelledby="route-details-title" maxWidth="sm" fullWidth slotProps={{ paper: { sx: { borderRadius: 3, m: { xs: 2, sm: 4 }, width: { xs: "calc(100% - 32px)", sm: "calc(100% - 64px)" } } } }}>
       {itinerary ? (
-        <div className="flex flex-col gap-4 p-6">
+        <div className="flex flex-col gap-3 p-4 sm:gap-4 sm:p-6">
           <div className="flex items-start gap-4">
-            <h2 id="route-details-title" className="flex-1 text-2xl font-medium text-ink">
+            <h2 id="route-details-title" className="flex-1 text-xl font-medium text-ink sm:text-2xl">
               Leave {formatTime(itinerary.leave)} <span aria-hidden="true">→</span>
               <span className="visually-hidden">, </span> Arrive {formatTime(itinerary.arrive)}
             </h2>
@@ -35,11 +35,11 @@ export default function RouteDetailsDialog({ itinerary, date, destination, timin
               <Close fontSize="small" />
             </IconButton>
           </div>
-          <p className="text-sm text-muted">
+          <p className="text-[13px] text-muted sm:text-sm">
             {formatDateShort(date)} · {itinerary.arrive - itinerary.leave} min · walking {itinerary.walkMinutes} min · {timingNote}
           </p>
           <Timeline itinerary={itinerary} destination={destination} />
-          <div className="flex flex-wrap justify-between gap-3 max-sm:flex-col">
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-between sm:gap-3">
             <Button variant="contained" onClick={onPreview} disabled={sending}>
               Trip preview
             </Button>
