@@ -80,7 +80,7 @@ To reset the data, stop the app and delete `data/planner.db`.
 | Services | `lib/routing.ts` | The mock trip search: walking-limit check, route finding, picking the trip closest to the requested time. |
 | Storage | `lib/db.ts`, `lib/seed.ts`, `data/planner.db` | SQLite tables `places`, `lines`, `line_stops`, `event_dates`, `saved_trips`. |
 | Saved route page | `app/trip/[code]/page.tsx` | Reads a saved route back from SQLite. |
-| Shared helpers | `lib/types.ts`, `lib/time.ts`, `lib/labels.ts`, `lib/services.ts` | Types, time formatting, wording. |
+| Shared helpers | `lib/types.ts`, `lib/time.ts`, `lib/labels.ts`, `lib/services.ts`, `lib/tripLink.ts` | Types, time formatting, wording. |
 
 ## What changed from the Assignment 3 prototype
 
@@ -115,5 +115,6 @@ The screens, wording and order follow the Figma prototype. These are the differe
 ## Deploying to Vercel
 
 Import the repository in Vercel with the default Next.js settings and Node 22 or 24. On Vercel the SQLite
-file lives in `/tmp`, which is temporary: the demo data is re-created automatically, but saved routes
-("See what was sent" links) can disappear when the server restarts.
+file lives in `/tmp`, which is temporary and not shared between server functions. The demo data is
+re-created automatically. Saved routes are still written to SQLite, and the "See what was sent" link also
+carries a copy of the route (`lib/tripLink.ts`), so the saved-route page works even when the row is gone.

@@ -5,10 +5,21 @@ import Timeline from "@/components/Timeline";
 import { getSavedTrip } from "@/lib/db";
 import { timingNote } from "@/lib/labels";
 import { formatDate, formatTime } from "@/lib/time";
+import { tripFromLink } from "@/lib/tripLink";
 
-async function SavedTripCard({ params }: { params: Promise<{ code: string }> }) {
+function readSavedTrip(code: string) {
+  try {
+    return getSavedTrip(code);
+  } catch (error) {
+    console.error("Reading the saved trip failed", error);
+    return null;
+  }
+}
+
+async function SavedTripCard({ params, searchParams }: Pick<PageProps<"/trip/[code]">, "params" | "searchParams">) {
   const { code } = await params;
-  const trip = getSavedTrip(code);
+  // SQLite first; if the row is not there (temporary storage on Vercel), use the copy carried in the link.
+  const trip = readSavedTrip(code) ?? tripFromLink((await searchParams).d, code);
   if (!trip) {
     return (
       <>
@@ -35,11 +46,11 @@ async function SavedTripCard({ params }: { params: Promise<{ code: string }> }) 
   );
 }
 
-export default function TripPage({ params }: PageProps<"/trip/[code]">) {
+export default function TripPage({ params, searchParams }: PageProps<"/trip/[code]">) {
   return (
     <section className="flex w-full max-w-[760px] flex-col gap-5 rounded-xl border border-line bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.06)] sm:p-8">
       <Suspense fallback={<p className="text-muted">Loading your route…</p>}>
-        <SavedTripCard params={params} />
+        <SavedTripCard params={params} searchParams={searchParams} />
       </Suspense>
       <Link href="/" className="focus-ring self-start rounded text-sm font-medium text-brand underline">
         Plan another trip

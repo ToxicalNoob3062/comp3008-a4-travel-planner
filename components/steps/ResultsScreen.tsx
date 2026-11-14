@@ -11,6 +11,7 @@ import StepCard from "@/components/StepCard";
 import { resultsTitle, shiftLabel, timingNote } from "@/lib/labels";
 import { requestedTime, type Action, type PlannerState } from "@/lib/plannerReducer";
 import { formatDateShort, formatTime } from "@/lib/time";
+import { tripLink } from "@/lib/tripLink";
 
 export const SHIFT_MINUTES = 15;
 
@@ -91,7 +92,15 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
             <AlertTitle sx={{ fontWeight: 500 }}>Route sent to your phone</AlertTitle>
             Leave {formatTime(sentRoute.leave)} from {state.from?.name}, arrive {formatTime(sentRoute.arrive)} ({timingNote(sentRoute, mode)}).
             Reference {send.code} ·{" "}
-            <a className="font-medium underline" href={`/trip/${send.code}`} target="_blank" rel="noreferrer">
+            <a className="font-medium underline" href={tripLink({
+                code: send.code,
+                fromName: state.from?.name ?? "",
+                toName: state.to?.name ?? "",
+                date: state.date,
+                mode,
+                time,
+                itinerary: sentRoute,
+              })} target="_blank" rel="noreferrer">
               See what was sent (opens in a new tab)
             </a>
           </Alert>
