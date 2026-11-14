@@ -151,8 +151,9 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
           <Alert severity="success">
             <AlertTitle sx={{ fontWeight: 500 }}>Route sent to your phone</AlertTitle>
             Leave {formatTime(sentRoute.leave)} from {state.from?.name}, arrive {formatTime(sentRoute.arrive)} ({timingNote(sentRoute, mode)}).
-            Reference {send.code} ·{" "}
-            <a className="font-medium underline" href={tripLink({
+            Reference {send.code}.
+            {/* The link always starts its own line, so no separator is ever left dangling at a line break. */}
+            <a className="mt-0.5 block font-medium underline" href={tripLink({
                 code: send.code,
                 fromName: state.from?.name ?? "",
                 toName: state.to?.name ?? "",
