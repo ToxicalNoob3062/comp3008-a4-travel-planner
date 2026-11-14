@@ -3,6 +3,7 @@
 // Material UI theme matching the Assignment 3 Figma prototype (OC Transpo red, Inter).
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { MotionConfig } from "motion/react";
+import PopupTransition from "@/components/motion/PopupTransition";
 import { PRESS_SCALE } from "@/components/motion/tokens";
 
 const theme = createTheme({
@@ -29,6 +30,8 @@ const theme = createTheme({
         message: { textWrap: "balance" },
       },
     },
+    // Every dialog opens with the shared popup animation.
+    MuiDialog: { defaultProps: { slots: { transition: PopupTransition } } },
     // A small press-down on every button, so a click is felt as well as seen.
     MuiButton: {
       styleOverrides: {

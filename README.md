@@ -122,6 +122,8 @@ Each one marks its element with a `data-motion` attribute, which makes it easy t
 | `CheckDraw` | `check-draw` | The box bounces in, the tick draws itself and a ring bursts outward, only when the user ticks it. | The service checkboxes, through `AnimatedCheckbox`. |
 | `SelectionHighlight` | `selection` | The selected look glides from the old item to the new one. | The route cards on Results. |
 | `DropIn` | `drop-in` | Opens a panel downward from its control. | The calendar. |
+| `PopupTransition` | none (set in the theme) | Grows out from the centre with a slight overshoot, shrinks away faster. | Every dialog, starting with Route details. |
+| `DropInPaper` | `drop-in` | `DropIn` applied to a Material UI panel. | The place suggestions list. |
 | `.press` (CSS class) and the MUI button theme | none | Presses the control down slightly while it is clicked. | Every button, pill and choice card. |
 
 ## Accessibility

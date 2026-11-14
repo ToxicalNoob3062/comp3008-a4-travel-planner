@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
+import DropInPaper from "@/components/motion/DropInPaper";
 import { fetchPlaces, filterPlaces } from "@/lib/api";
 import type { Place } from "@/lib/types";
 
@@ -44,6 +45,8 @@ export default function PlaceField({ label, value, onChange, error }: PlaceField
       autoHighlight
       openOnFocus
       options={places}
+      // The suggestions drop in from the field, like the calendar does from the date pill.
+      slots={{ paper: DropInPaper }}
       value={value}
       loading={status === "loading"}
       // Once a place is chosen the box shows its name; list every place again so it is easy to change.

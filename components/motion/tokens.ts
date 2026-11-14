@@ -41,3 +41,11 @@ export const SLIDE_DISTANCE = 36;
 
 /** Scale of a button or pill while it is pressed. Also used by the `.press` CSS class and the MUI theme. */
 export const PRESS_SCALE = 0.95;
+
+/** Dialogs: grow in with a slight overshoot, leave a little faster. */
+export const POPUP = {
+  enterMs: 320,
+  exitMs: 170,
+  enterEasing: "cubic-bezier(0.34, 1.45, 0.64, 1)",
+  exitEasing: "cubic-bezier(0.4, 0, 1, 1)",
+} as const;
