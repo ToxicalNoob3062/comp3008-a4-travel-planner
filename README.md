@@ -117,7 +117,7 @@ Each one marks its element with a `data-motion` attribute, which makes it easy t
 | `MotionProvider`, `LayoutMotion` | none | Load Motion's features (see Performance). | `app/providers.tsx`, the Results screen. |
 | `ScreenTransition` | `screen` | Slides a screen in from the direction of travel (Next from the right, Back from the left) and moves focus to its heading. | Every step change, in `TripPlanner`. |
 | `ProgressBar` | `progress` | Fills the next segment going forward, drains it going back. | The four-step bar in `StepCard`. |
-| `Pop` | `pop` | Rises and settles with one soft bounce. Tips, notes and warnings then fade out after 5 seconds and close their space; boxes marked `stay` remain. | Tips, warnings, errors, the goal sentence, the "Route sent" confirmation. |
+| `Pop` | `pop` | Rises and settles with one soft bounce. Up-front tips and cautions then fade out in place after 5 seconds; boxes marked `stay` (feedback on an action) remain. | Tips, warnings, errors, the goal sentence, the "Route sent" confirmation. |
 | `FadeUp` | `fade-up` | Fades and moves into place; `order` staggers a list, `from="left"` slides sideways, `as="li"` renders a list item. | Route cards, route steps, the start screen, the date and time row. |
 | `ScaleIn` | `scale-in` | Snaps a small element into view. | The check mark on the chosen Arrive by / Leave at card. |
 | `CheckDraw` | `check-draw` | The box bounces in, the tick draws itself and a ring bursts outward, only when the user ticks it. | The service checkboxes, through `AnimatedCheckbox`. |
@@ -141,8 +141,9 @@ desktop. No screen scrolls sideways.
   wheels and AM/PM on one row, and route cards three lines tall with a compact "Explore" button. Every step and the
   results list fit on one phone screen without scrolling.
 - **Review:** on a phone each row's edit control is a pencil icon (40 px tap target, named for screen readers).
-- **Notes fade away:** tips, notes and warnings disappear by themselves after 5 seconds (they pause while the pointer
-  is on them). Errors that need an action and the "Route sent" confirmation stay.
+- **Up-front tips fade out:** tips and cautions shown before the user has done anything (the wheel tip, "Pick one",
+  the services caution) fade out in place after 5 seconds, keeping their space so nothing moves. Feedback on an action
+  (the goal sentence, errors, "Route sent", "no routes for that time") stays.
 - **Time wheels with a mouse:** a wheel scrolls only while it has focus (after a click or Tab). Scrolling the page with
   the pointer over a wheel therefore cannot change the time by accident. On touch screens the wheel is dragged directly,
   and the tip under the wheels changes its wording to match.
@@ -158,7 +159,7 @@ npm test
 
 | Test file | What it checks |
 | --- | --- |
-| `motion/__tests__/Pop.test.tsx` | Starts hidden and small, ends at rest, overshoots once (the bounce), two boxes stay exactly in step, no sliding with reduced motion, fades away and closes its height when its time is up, stays when told to, waits while the pointer is on it. |
+| `motion/__tests__/Pop.test.tsx` | Starts hidden and small, ends at rest, overshoots once (the bounce), two boxes stay exactly in step, no sliding with reduced motion, fades out in place when its time is up (no movement, keeps its space), stays when told to, waits while the pointer is on it. |
 | `motion/__tests__/FadeUp.test.tsx` | Start and end positions, `from="left"`, list items arrive in order, `delay`, list-item mode, screen-reader attributes, reduced motion. |
 | `motion/__tests__/ProgressBar.test.tsx` | ARIA values, fills the new segment going forward, drains going back, resets for a new trip, fills gradually. |
 | `motion/__tests__/ScreenTransition.test.tsx` | First screen does not slide or take focus; Next arrives from the right and Back from the left; focus moves to the new heading; one screen at a time. |

@@ -4,10 +4,10 @@
 // the box rises a little and settles with a soft bounce, which draws the eye to it once and then stays still.
 // Give it a `key` at the call site to make it pop again when its content changes.
 //
-// Tips, notes and warnings then fade away by themselves after NOTICE_VISIBLE_MS and give their space back.
-// Pass `stay` for a box the user has to act on or come back to (an error with a fix, a confirmation with a link).
+// Up-front tips and cautions (things we tell the user before they have done anything) then fade out in place
+// after NOTICE_VISIBLE_MS. The box keeps its space, so nothing else on the screen moves.
+// Pass `stay` for feedback on something the user just did (the goal sentence, an error, a confirmation).
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { AnimatePresence } from "motion/react";
 import * as m from "motion/react-m";
 import { EASE_SMOOTH, NOTICE_EXIT, NOTICE_VISIBLE_MS, POP_DELAY, SPRING } from "./tokens";
 
@@ -40,31 +40,27 @@ export default function Pop({ children, className, stay = false, visibleMs = NOT
   }, [stay, visibleMs]);
 
   return (
-    <AnimatePresence>
-      {gone ? null : (
-        <m.div
-          data-motion="pop"
-          className={className}
-          initial={{ opacity: 0, y: 12, scale: 0.94 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          // Fades out, closes its height and takes back the gap above it, so what is below slides up smoothly.
-          exit={{
-            opacity: 0,
-            height: 0,
-            marginTop: "calc(var(--gap, 0px) * -1)",
-            overflow: "hidden",
-            transition: { duration: NOTICE_EXIT, ease: EASE_SMOOTH },
-          }}
-          transition={{ ...SPRING.pop, delay: POP_DELAY }}
-          // The countdown waits while the pointer is on the box or something inside it has focus, so it never vanishes mid-read.
-          onPointerEnter={stop}
-          onPointerLeave={start}
-          onFocus={stop}
-          onBlur={start}
-        >
-          {children}
-        </m.div>
-      )}
-    </AnimatePresence>
+    <m.div
+      data-motion="pop"
+      className={className}
+      // Once faded, the box is hidden from screen readers and clicks as well as from view.
+      aria-hidden={gone || undefined}
+      inert={gone}
+      initial={{ opacity: 0, y: 12, scale: 0.94 }}
+      animate={
+        gone
+          ? // Fades out exactly where it is: no sliding, no shrinking.
+            { opacity: 0, y: 0, scale: 1, transition: { duration: NOTICE_EXIT, ease: EASE_SMOOTH } }
+          : { opacity: 1, y: 0, scale: 1 }
+      }
+      transition={{ ...SPRING.pop, delay: POP_DELAY }}
+      // The countdown waits while the pointer is on the box or something inside it has focus, so it never vanishes mid-read.
+      onPointerEnter={gone ? undefined : stop}
+      onPointerLeave={gone ? undefined : start}
+      onFocus={gone ? undefined : stop}
+      onBlur={gone ? undefined : start}
+    >
+      {children}
+    </m.div>
   );
 }

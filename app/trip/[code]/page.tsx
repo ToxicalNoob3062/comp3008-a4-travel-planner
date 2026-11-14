@@ -39,7 +39,7 @@ async function SavedTripCard({ params, searchParams }: Pick<PageProps<"/trip/[co
   return (
     <>
       <p className="text-sm font-medium text-brand">Sent to your phone · Reference {trip.code}</p>
-      <h1 className="text-xl font-medium text-ink sm:text-[28px]">
+      <h1 className="text-lg font-medium text-ink sm:text-[28px]">
         Leave {formatTime(itinerary.leave)} → Arrive {formatTime(itinerary.arrive)}
       </h1>
       <p className="text-sm text-muted">

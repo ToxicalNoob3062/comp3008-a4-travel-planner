@@ -39,7 +39,7 @@ export default function ReviewStep({ state, dispatch, onSearch, onUseStop, onAdd
     return stop ? ` (${stop.walkMinutes}-min walk ${which === "from" ? "to" : "from"} ${stop.stopName})` : "";
   };
 
-  const rows: { label: string; value: string; step: EditableStep }[] = [
+  const rows: { label: string; value: string; items?: string[]; step: EditableStep }[] = [
     { label: "From", value: `${state.from?.name ?? ""}${viaStop("from")}`, step: "where" },
     { label: "To", value: `${state.to?.name ?? ""}${viaStop("to")}`, step: "where" },
     {
@@ -47,7 +47,8 @@ export default function ReviewStep({ state, dispatch, onSearch, onUseStop, onAdd
       value: time === null ? "" : `${formatTime(time)}, ${formatDate(state.date)}`,
       step: "when",
     },
-    { label: "Services", value: selectedServices(state).map(serviceLabel).join(", "), step: "services" },
+    // Services are shown as a bulleted list, one per line.
+    { label: "Services", value: "", items: selectedServices(state).map(serviceLabel), step: "services" },
   ];
 
   return (
@@ -75,7 +76,17 @@ export default function ReviewStep({ state, dispatch, onSearch, onUseStop, onAdd
         {rows.map((row) => (
           <div key={row.label} className="flex items-center gap-3 border-b border-line py-2 sm:gap-4 sm:py-3.5">
             <dt className="w-[68px] shrink-0 text-[13px] text-muted sm:w-[110px] sm:text-sm">{row.label}</dt>
-            <dd className="min-w-px flex-1 text-[15px] font-medium text-ink sm:text-base">{row.value}</dd>
+            <dd className="min-w-px flex-1 text-[15px] font-medium text-ink sm:text-base">
+              {row.items ? (
+                <ul className="list-disc pl-[1.1em] marker:text-brand">
+                  {row.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              ) : (
+                row.value
+              )}
+            </dd>
             <dd>
               <button
                 type="button"

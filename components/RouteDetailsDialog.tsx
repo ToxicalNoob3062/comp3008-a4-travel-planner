@@ -26,8 +26,8 @@ export default function RouteDetailsDialog({ itinerary, date, destination, timin
     <Dialog open={!!itinerary} onClose={onClose} aria-labelledby="route-details-title" maxWidth="sm" fullWidth slotProps={{ paper: { sx: { borderRadius: 3, m: { xs: 2, sm: 4 }, width: { xs: "calc(100% - 32px)", sm: "calc(100% - 64px)" } } } }}>
       {itinerary ? (
         <div className="flex flex-col gap-3 p-4 sm:gap-4 sm:p-6">
-          <div className="flex items-start gap-4">
-            <h2 id="route-details-title" className="flex-1 text-xl font-medium text-ink sm:text-2xl">
+          <div className="flex items-center gap-3 sm:items-start sm:gap-4">
+            <h2 id="route-details-title" className="flex-1 text-base font-semibold text-ink sm:text-2xl sm:font-medium">
               Leave {formatTime(itinerary.leave)} <span aria-hidden="true">→</span>
               <span className="visually-hidden">, </span> Arrive {formatTime(itinerary.arrive)}
             </h2>

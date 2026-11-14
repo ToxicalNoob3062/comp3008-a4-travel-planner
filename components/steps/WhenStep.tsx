@@ -102,7 +102,7 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
 
       {mode ? (
         // The date and time controls rise into place once Arrive by / Leave at is chosen.
-        <FadeUp className="flex flex-col gap-4 [--gap:1rem] sm:gap-6 sm:[--gap:1.5rem]">
+        <FadeUp className="flex flex-col gap-4 sm:gap-6">
           {/* Phone: the date takes a full row, then the time wheels and AM/PM share the next row. Wide: all in one row. */}
           <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1 sm:gap-x-5 sm:gap-y-4">
             <DateField
@@ -153,10 +153,10 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
           </Pop>
 
           {/* The system repeats the goal back in plain words so a wrong setting is noticed here.
-              It pops in again whenever the date or time changes, then fades away like the other notes. */}
+              It is feedback on what the user just entered, so it stays. It pops again whenever the date or time changes. */}
           <div aria-live="polite" className="contents">
             {complete && time !== null ? (
-              <Pop key={`${mode}-${date}-${time}`}>
+              <Pop key={`${mode}-${date}-${time}`} stay>
               <Alert severity="info" icon={<InfoOutlined color="primary" />} sx={{ bgcolor: "#f5f5f5", color: "text.primary" }}>
                 <AlertTitle sx={{ fontWeight: 500, mb: 0.5 }}>
                   {mode === "arrive"

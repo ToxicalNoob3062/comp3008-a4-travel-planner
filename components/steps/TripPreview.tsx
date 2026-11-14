@@ -39,7 +39,7 @@ export default function TripPreview({ itinerary, from, to, date, sending, onBack
       }
     >
       <p className="-mt-3 text-[13px] text-muted sm:text-sm">
-        {formatDateShort(date)} · Leave {formatTime(itinerary.leave)} → Arrive {formatTime(itinerary.arrive)} · {itinerary.summary}
+        {formatDateShort(date)} · Leave {formatTime(itinerary.leave)} → Arrive {formatTime(itinerary.arrive)}
       </p>
       <div className="flex flex-col gap-5 md:flex-row">
         <div className="md:w-[250px] md:shrink-0">

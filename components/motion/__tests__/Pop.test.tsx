@@ -72,28 +72,39 @@ describe("Pop", () => {
     expect([...seen].filter((value) => value !== start && value !== "none")).toEqual([]);
   });
 
-  it("fades away by itself and leaves the page once its time is up", async () => {
+  it("fades out by itself once its time is up, and is then hidden from screen readers too", async () => {
     renderWithMotion(<Pop visibleMs={150}>Tip</Pop>);
-    expect(screen.getByText("Tip")).toBeInTheDocument();
-    await waitFor(() => expect(screen.queryByText("Tip")).not.toBeInTheDocument(), { timeout: 3000 });
+    const box = screen.getByText("Tip");
+    await waitFor(() => expect(box).toHaveAttribute("aria-hidden", "true"), { timeout: 4000 });
+    expect(box).toHaveAttribute("inert");
+    await waitFor(() => expect(opacityOf(box)).toBe(0), { timeout: 4000 });
   });
 
-  it("closes its height on the way out, so what is below slides up", async () => {
-    renderWithMotion(<Pop visibleMs={50}>Tip</Pop>);
+  it("fades out in place: it does not move, shrink or give up its space", async () => {
+    // Long enough for the entrance to finish first.
+    renderWithMotion(<Pop visibleMs={1500}>Tip</Pop>);
     const box = screen.getByText("Tip");
-    let sawClosing = false;
-    const watch = setInterval(() => {
-      if (box.style.height !== "" && box.style.height !== "auto") sawClosing = true;
-    }, 4);
-    await waitFor(() => expect(screen.queryByText("Tip")).not.toBeInTheDocument(), { timeout: 3000 });
+    await waitUntilSettled(box);
+    const moved = new Set<string>();
+    const watch = setInterval(() => moved.add(transformOf(box)), 4);
+    await waitFor(() => expect(opacityOf(box)).toBe(0), { timeout: 6000 });
     clearInterval(watch);
-    expect(sawClosing).toBe(true);
+    // Every frame is at rest, give or take the last hair of the entrance bounce (well under half a pixel).
+    const offRest = [...moved].filter((value) => {
+      const y = Math.abs(Number(/translateY\((-?[\d.]+)px\)/.exec(value)?.[1] ?? 0));
+      const scale = Number(/scale\(([\d.]+)\)/.exec(value)?.[1] ?? 1);
+      return y > 0.5 || Math.abs(scale - 1) > 0.005;
+    });
+    expect(offRest).toEqual([]);
+    expect(box.style.height).toBe("");
+    expect(box).toBeInTheDocument();
   });
 
   it("stays on screen when told to (errors with a fix, confirmations with a link)", async () => {
     renderWithMotion(<Pop stay visibleMs={50}>Route sent</Pop>);
     await new Promise((resolve) => setTimeout(resolve, 600));
-    expect(screen.getByText("Route sent")).toBeInTheDocument();
+    await waitUntilSettled(screen.getByText("Route sent"));
+    expect(screen.getByText("Route sent")).not.toHaveAttribute("aria-hidden");
   });
 
   it("waits while the pointer is on it, then starts counting again", async () => {
@@ -102,8 +113,9 @@ describe("Pop", () => {
     const box = screen.getByText("Tip");
     await user.hover(box);
     await new Promise((resolve) => setTimeout(resolve, 500));
-    expect(box).toBeInTheDocument();
+    await waitUntilSettled(box);
+    expect(box).not.toHaveAttribute("aria-hidden");
     await user.unhover(box);
-    await waitFor(() => expect(screen.queryByText("Tip")).not.toBeInTheDocument(), { timeout: 3000 });
+    await waitFor(() => expect(opacityOf(box)).toBe(0), { timeout: 4000 });
   });
 });

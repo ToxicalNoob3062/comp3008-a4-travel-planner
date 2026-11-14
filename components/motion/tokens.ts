@@ -33,11 +33,11 @@ export const SPRING = {
  */
 export const POP_DELAY = 0.25;
 
-/** How long a tip, note or warning stays on screen before it fades away by itself (milliseconds). */
+/** How long an up-front tip or caution stays on screen before it fades out by itself (milliseconds). */
 export const NOTICE_VISIBLE_MS = 5000;
 
-/** Seconds a message box takes to fade out and close its space. */
-export const NOTICE_EXIT = 0.35;
+/** Seconds a message box takes to fade out. Slow, so it is seen leaving rather than vanishing. */
+export const NOTICE_EXIT = 0.8;
 
 /** Seconds between one item and the next in a staggered list. */
 export const STAGGER = 0.13;

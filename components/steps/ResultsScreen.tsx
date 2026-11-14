@@ -142,7 +142,7 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
 
       <div aria-live="polite" className="contents">
         {state.notice ? (
-          <Pop key={state.notice}>
+          <Pop key={state.notice} stay>
             <Alert severity="warning">{state.notice}</Alert>
           </Pop>
         ) : null}

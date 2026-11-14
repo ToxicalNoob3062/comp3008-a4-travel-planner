@@ -32,7 +32,7 @@ export default function StartScreen({ onStart }: { onStart: () => void }) {
         <p className="mt-3 px-4 text-center text-[13px] text-brand-dark sm:mt-0 sm:text-sm">Buses, O-Train and STO, planned in one search</p>
       </FadeUp>
 
-      <h1 id="screen-title" tabIndex={-1} data-screen-heading className="text-2xl font-medium text-ink outline-none sm:text-[32px]">
+      <h1 id="screen-title" tabIndex={-1} data-screen-heading className="text-xl font-medium text-ink outline-none sm:text-[32px]">
         Plan a trip
       </h1>
       <p className="text-[15px] text-muted sm:text-base">

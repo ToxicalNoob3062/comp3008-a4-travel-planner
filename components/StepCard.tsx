@@ -25,7 +25,7 @@ export default function StepCard({ title, step, headerAction, children, actions,
     <section aria-labelledby="screen-title" className={SCREEN_CARD}>
       <div className="flex items-center gap-3 sm:gap-4">
         {/* tabIndex -1 lets the planner move keyboard focus here when the screen changes. */}
-        <h1 id="screen-title" tabIndex={-1} data-screen-heading className="flex-1 text-xl font-medium text-ink outline-none sm:text-[28px]">
+        <h1 id="screen-title" tabIndex={-1} data-screen-heading className="flex-1 text-lg font-medium text-ink outline-none sm:text-[28px]">
           {title}
         </h1>
         {step ? (

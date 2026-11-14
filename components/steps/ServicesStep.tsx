@@ -51,10 +51,9 @@ export default function ServicesStep({ state, dispatch }: { state: PlannerState;
         ))}
       </fieldset>
 
-      {/* `contents`: the wrapper only announces changes; the box itself is the card's child, so its gap closes with it. */}
-      <div aria-live="polite" className="contents">
+      <div aria-live="polite">
         {/* The key makes the box pop again when it switches between the note and the error.
-            The note fades away by itself; the error stays until a service is chosen. */}
+            The up-front caution fades out by itself; the error stays until a service is chosen. */}
         <Pop key={complete ? "note" : "error"} stay={!complete}>
           {complete ? (
             <Alert severity="warning">Unchecking a service removes those trips from your results.</Alert>
