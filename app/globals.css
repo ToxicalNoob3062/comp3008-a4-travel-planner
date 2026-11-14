@@ -1,26 +1,81 @@
+/* Layer order lets Tailwind utilities override Material UI component styles. */
+@layer theme, base, mui, components, utilities;
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --color-brand: #d30f1d;
+  --color-brand-dark: #9e051f;
+  --color-brand-tint: #fdedee;
+  --color-ink: #39383f;
+  --color-muted: #666666;
+  --color-line: #e0e0e0;
+  --color-page: #f5f6f7;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-page);
+  color: var(--color-ink);
+}
+
+/* Screen-reader-only text (announcements, extra labels). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* "Skip to content" link: hidden until it receives keyboard focus. */
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -48px;
+  z-index: 2000;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: #fff;
+  color: #9e051f;
+  font-weight: 600;
+}
+.skip-link:focus {
+  top: 8px;
+  outline: 3px solid #1976d2;
+}
+
+/* Clear keyboard focus ring on our own (non-MUI) interactive elements. */
+.focus-ring:focus-visible {
+  outline: 3px solid #1976d2;
+  outline-offset: 2px;
+}
+
+/* Lettered map pins (A = start, B = destination). */
+.map-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: #d30f1d;
+  color: #fff;
+  font: 700 13px/1 var(--font-inter), sans-serif;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.map-pin--stop {
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border: 3px solid #39383f;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
