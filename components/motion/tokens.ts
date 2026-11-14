@@ -4,11 +4,16 @@
 /** Fast start, soft landing. Used for things arriving on screen. */
 export const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
+/** Gentle start and gentle landing. Used for list items, so they glide in instead of snapping. */
+export const EASE_SMOOTH = [0.4, 0, 0.2, 1] as const;
+
 export const DURATION = {
   /** A screen leaving. Kept short so a click never feels held up. */
   exit: 0.13,
-  /** A screen or an item arriving. */
+  /** A screen arriving. */
   enter: 0.3,
+  /** One item of a list (a route card, a route step) fading into place. Slow enough to read as a glide. */
+  item: 0.55,
   /** A progress bar segment filling or draining. */
   progress: 0.55,
 } as const;
@@ -29,7 +34,7 @@ export const SPRING = {
 export const POP_DELAY = 0.25;
 
 /** Seconds between one item and the next in a staggered list. */
-export const STAGGER = 0.07;
+export const STAGGER = 0.13;
 
 /** How far (px) a screen travels when it slides in. */
 export const SLIDE_DISTANCE = 36;

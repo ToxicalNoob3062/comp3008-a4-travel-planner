@@ -6,7 +6,7 @@
 //   <FadeUp as="li" from="left">  a list item sliding in from the left
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
-import { DURATION, EASE_OUT, STAGGER } from "./tokens";
+import { DURATION, EASE_SMOOTH, STAGGER } from "./tokens";
 
 const TAGS = { div: motion.div, li: motion.li } as const;
 const OFFSET = { below: { y: 14 }, left: { x: -10 } } as const;
@@ -37,7 +37,7 @@ export default function FadeUp({ children, className, as = "div", from = "below"
       aria-label={rest["aria-label"]}
       initial={{ opacity: 0, ...OFFSET[from] }}
       animate={{ opacity: 1, x: 0, y: 0 }}
-      transition={{ duration: DURATION.enter, ease: EASE_OUT, delay: delay + order * STAGGER }}
+      transition={{ duration: DURATION.item, ease: EASE_SMOOTH, delay: delay + order * STAGGER }}
     >
       {children}
     </Tag>
