@@ -119,6 +119,7 @@ Each one marks its element with a `data-motion` attribute, which makes it easy t
 | `Pop` | `pop` | Rises and settles with one soft bounce, then stays still. | Tips, warnings, errors, the goal sentence, the "Route sent" confirmation. |
 | `FadeUp` | `fade-up` | Fades and moves into place; `order` staggers a list, `from="left"` slides sideways, `as="li"` renders a list item. | Route cards, route steps, the start screen, the date and time row. |
 | `ScaleIn` | `scale-in` | Snaps a small element into view. | The check mark on the chosen Arrive by / Leave at card. |
+| `CheckDraw` | `check-draw` | The box bounces in, the tick draws itself and a ring bursts outward, only when the user ticks it. | The service checkboxes, through `AnimatedCheckbox`. |
 | `DropIn` | `drop-in` | Opens a panel downward from its control. | The calendar. |
 | `.press` (CSS class) and the MUI button theme | none | Presses the control down slightly while it is clicked. | Every button, pill and choice card. |
 

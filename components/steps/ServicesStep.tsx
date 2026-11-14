@@ -4,7 +4,7 @@
 import type { Dispatch } from "react";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
+import AnimatedCheckbox from "@/components/AnimatedCheckbox";
 import Pop from "@/components/motion/Pop";
 import StepActions from "@/components/StepActions";
 import StepCard from "@/components/StepCard";
@@ -35,7 +35,7 @@ export default function ServicesStep({ state, dispatch }: { state: PlannerState;
         <legend className="visually-hidden">Services to include in the search</legend>
         {SERVICE_OPTIONS.map((option) => (
           <label key={option.id} className="flex cursor-pointer items-start gap-1 rounded py-1 hover:bg-[#fafafa]">
-            <Checkbox
+            <AnimatedCheckbox
               checked={state.services[option.id]}
               onChange={() => dispatch({ type: "TOGGLE_SERVICE", service: option.id })}
               slotProps={{ input: { "aria-describedby": `service-${option.id}` } }}
