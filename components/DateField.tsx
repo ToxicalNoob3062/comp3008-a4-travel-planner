@@ -34,6 +34,7 @@ export default function DateField({ label, value, onChange, className }: DateFie
       <TextField
         label={label}
         variant="standard"
+        focused={open || undefined}
         className={className}
         value={chosen ? formatDate(value) : ""}
         placeholder="Choose a date"
@@ -51,7 +52,7 @@ export default function DateField({ label, value, onChange, className }: DateFie
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton aria-label={chosen ? `Change date, ${formatDate(value, "long")}` : "Choose a date"} edge="end" size="small">
-                  <CalendarMonth />
+                  <CalendarMonth color={open ? "primary" : "inherit"} />
                 </IconButton>
               </InputAdornment>
             ),

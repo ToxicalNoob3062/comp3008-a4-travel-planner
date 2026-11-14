@@ -71,7 +71,8 @@ export default function TimeWheel({ label, options, value, onChange, pageStep = 
       <span id={labelId} className="text-xs tracking-[0.15px] text-[rgba(57,56,63,0.6)]">
         {label}
       </span>
-      <div className="relative w-[72px]">
+      {/* The wrapper clips the list, which is wider than it, so the scrollbar is never visible in any browser. */}
+      <div className="relative w-[72px] overflow-hidden rounded-md has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[#1976d2]">
         {/* The highlighted band marks the chosen value. */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-10 h-10 rounded-md border border-brand bg-brand-tint" />
         <div
@@ -85,7 +86,7 @@ export default function TimeWheel({ label, options, value, onChange, pageStep = 
           aria-valuetext={value === "" ? "Not chosen" : value}
           onScroll={onScroll}
           onKeyDown={onKeyDown}
-          className="time-wheel focus-ring relative snap-y snap-mandatory overflow-y-auto rounded-md"
+          className="time-wheel relative w-[calc(100%+32px)] snap-y snap-mandatory overflow-y-scroll pr-8 outline-none"
           style={{ height: ROW * VISIBLE, paddingBlock: ROW }}
         >
           {options.map((option, i) => (

@@ -83,6 +83,7 @@ body {
 /* Time wheel: hide the scrollbar and fade the values above and below the chosen one. */
 .time-wheel {
   scrollbar-width: none;
+  -ms-overflow-style: none;
   mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
 }
 .time-wheel::-webkit-scrollbar {
