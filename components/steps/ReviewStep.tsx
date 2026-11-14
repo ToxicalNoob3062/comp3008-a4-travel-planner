@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
+import EditOutlined from "@mui/icons-material/EditOutlined";
 import Pop from "@/components/motion/Pop";
 import SearchErrorPanel from "@/components/SearchErrorPanel";
 import StepCard from "@/components/StepCard";
@@ -78,11 +79,12 @@ export default function ReviewStep({ state, dispatch, onSearch, onUseStop, onAdd
             <dd>
               <button
                 type="button"
-                className="focus-ring cursor-pointer rounded px-1 text-sm font-medium text-brand hover:underline disabled:opacity-50"
+                className="press focus-ring flex cursor-pointer items-center gap-1 rounded-full px-2.5 py-1 text-sm font-medium text-brand hover:bg-brand-tint disabled:opacity-50"
                 onClick={() => dispatch({ type: "EDIT", step: row.step })}
                 disabled={searching}
                 aria-label={`Edit ${row.label.toLowerCase()}`}
               >
+                <EditOutlined aria-hidden="true" sx={{ fontSize: 16 }} />
                 Edit
               </button>
             </dd>
