@@ -72,7 +72,7 @@ export default function SearchErrorPanel({ error, busy, onUseStop, onAddService,
     return (
       <div className="flex flex-wrap items-start gap-5">
         <div className="flex min-w-[260px] flex-1 flex-col gap-2">
-          <Alert severity="error" variant="outlined" sx={{ bgcolor: "#fdeded", borderColor: "#d32f2f", borderRadius: 2 }}>
+          <Alert severity="error" variant="outlined" sx={{ bgcolor: "#fdeded", borderColor: "#d32f2f" }}>
             <AlertTitle sx={{ fontWeight: 500 }}>We couldn&apos;t find a stop near your {end}</AlertTitle>
             No stop is within your {error.limitMinutes}-min walking limit of {error.place.name}. We widened the search: the
             closest stop is {error.stop.name}, a {error.walkMinutes}-min walk.
@@ -110,7 +110,7 @@ export default function SearchErrorPanel({ error, busy, onUseStop, onAddService,
     const service = error.addService;
     return (
       <div className="flex flex-col gap-2">
-        <Alert severity="error" variant="outlined" sx={{ bgcolor: "#fdeded", borderColor: "#d32f2f", borderRadius: 2 }}>
+        <Alert severity="error" variant="outlined" sx={{ bgcolor: "#fdeded", borderColor: "#d32f2f" }}>
           <AlertTitle sx={{ fontWeight: 500 }}>We couldn&apos;t find any routes for this trip</AlertTitle>
           {service
             ? `None of the services you chose connect these two places at that time. ${serviceLabel(service)} would.`
@@ -145,7 +145,7 @@ export default function SearchErrorPanel({ error, busy, onUseStop, onAddService,
     <Alert
       severity="error"
       variant="outlined"
-      sx={{ bgcolor: "#fdeded", borderColor: "#d32f2f", borderRadius: 2 }}
+      sx={{ bgcolor: "#fdeded", borderColor: "#d32f2f" }}
       action={
         <Button color="inherit" onClick={onRetry} disabled={busy}>
           Try again

@@ -20,7 +20,8 @@ const theme = createTheme({
   shape: { borderRadius: 4 },
   components: {
     // Even out the lines in every alert box so a single word is never left alone on the last line.
-    MuiAlert: { styleOverrides: { message: { textWrap: "balance" } } },
+    // Rounder corners on every alert box (the same 10px as the choice cards and the suggested-fix card).
+    MuiAlert: { styleOverrides: { root: { borderRadius: 10 }, message: { textWrap: "balance" } } },
     // A small press-down on every button, so a click is felt as well as seen.
     MuiButton: {
       styleOverrides: {
