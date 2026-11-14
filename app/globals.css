@@ -103,3 +103,11 @@ body {
 .map-walk-label::before {
   border-top-color: #39383f;
 }
+
+/* Paragraphs and headings: avoid a single word alone on the last line. */
+p,
+h1,
+h2,
+figcaption {
+  text-wrap: pretty;
+}

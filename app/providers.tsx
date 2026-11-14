@@ -16,6 +16,10 @@ const theme = createTheme({
     button: { fontWeight: 500, letterSpacing: "0.46px" },
   },
   shape: { borderRadius: 4 },
+  components: {
+    // Even out the lines in every alert box so a single word is never left alone on the last line.
+    MuiAlert: { styleOverrides: { message: { textWrap: "balance" } } },
+  },
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {
