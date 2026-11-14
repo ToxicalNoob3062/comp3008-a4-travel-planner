@@ -33,7 +33,8 @@ function Screen({ direction, children }: { direction: number; children: ReactNod
       ref={ref}
       custom={direction}
       variants={variants}
-      initial="enter"
+      // The first screen after a page load does not slide in, but its own contents still animate.
+      initial={firstScreenShown ? "enter" : false}
       animate="center"
       exit="exit"
       className="flex w-full flex-col items-center"
@@ -53,7 +54,7 @@ interface ScreenTransitionProps {
 
 export default function ScreenTransition({ screenKey, direction, children }: ScreenTransitionProps) {
   return (
-    <AnimatePresence mode="wait" initial={false} custom={direction}>
+    <AnimatePresence mode="wait" custom={direction}>
       <Screen key={screenKey} direction={direction}>
         {children}
       </Screen>
