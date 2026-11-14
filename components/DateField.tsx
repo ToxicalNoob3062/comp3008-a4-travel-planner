@@ -64,11 +64,13 @@ export default function DateField({ label, value, onChange, className }: DateFie
             open ? "border-2 border-brand bg-brand-tint" : "border-[#bdbdc2] bg-[#f2f2f4] hover:border-ink"
           }`}
         >
-          <span className={`text-sm font-semibold ${open ? "text-brand" : "text-ink"}`}>{label}</span>
-          <span className={`flex-1 text-base whitespace-nowrap ${chosen ? "font-semibold text-ink" : "text-[rgba(57,56,63,0.6)]"}`}>
-            {chosen ? formatDate(value) : "Choose a date"}
-          </span>
+          {/* Icon first, then the value, then the label on the right: the same order as "9 hour" and "08 min".
+              While empty it reads "Choose date". */}
           <CalendarMonth fontSize="small" color={open ? "primary" : "action"} />
+          <span className={`flex-1 text-right text-base whitespace-nowrap ${chosen ? "font-semibold text-ink" : "text-[rgba(57,56,63,0.6)]"}`}>
+            {chosen ? formatDate(value) : "Choose"}
+          </span>
+          <span className={`text-sm font-semibold ${open ? "text-brand" : "text-ink"}`}>{label.toLowerCase()}</span>
         </button>
         {/* Rendered next to the field (not at the end of the page) so Tab moves into it naturally. */}
         <Popper
