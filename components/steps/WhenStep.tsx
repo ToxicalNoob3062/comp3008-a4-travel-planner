@@ -5,7 +5,6 @@
 import type { Dispatch } from "react";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import Button from "@mui/material/Button";
 import AccessTime from "@mui/icons-material/AccessTime";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import Flag from "@mui/icons-material/Flag";
@@ -106,17 +105,28 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
               <TimeWheel describedBy="time-hint" label="Hour" unit="hour" side="left" options={HOURS} value={hour} pageStep={3} onChange={(value) => dispatch({ type: "SET_FIELD", field: "hour", value })} />
               <TimeWheel describedBy="time-hint" label="Minute" unit="min" side="right" options={MINUTES} value={minute} onChange={(value) => dispatch({ type: "SET_FIELD", field: "minute", value })} />
             </div>
-            <div role="group" aria-label="AM or PM" className="flex gap-3 sm:pt-[42px]">
-              {(["AM", "PM"] as Meridiem[]).map((value) => (
-                <Button
-                  key={value}
-                  variant={meridiem === value ? "contained" : "outlined"}
-                  aria-pressed={meridiem === value}
-                  onClick={() => dispatch({ type: "SET_MERIDIEM", meridiem: value })}
-                >
-                  {value}
-                </Button>
-              ))}
+            {/* One pill with two halves, in the same style as the date and time pills. */}
+            <div role="group" aria-label="AM or PM" className="flex h-10 sm:mt-10">
+              {(["AM", "PM"] as Meridiem[]).map((value, i) => {
+                const pressed = meridiem === value;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-pressed={pressed}
+                    onClick={() => dispatch({ type: "SET_MERIDIEM", meridiem: value })}
+                    className={`focus-ring relative w-14 cursor-pointer border text-sm font-semibold transition-colors focus-visible:z-10 ${
+                      i === 0 ? "rounded-l-full" : "-ml-px rounded-r-full"
+                    } ${
+                      pressed
+                        ? "z-[1] border-brand bg-brand text-white"
+                        : "border-[#bdbdc2] bg-[#f2f2f4] text-ink hover:border-ink hover:z-[1]"
+                    }`}
+                  >
+                    {value}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
