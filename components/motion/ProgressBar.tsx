@@ -2,7 +2,7 @@
 
 // The four-segment progress bar. Moving forward fills the next segment; going back drains it.
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { DURATION, EASE_OUT } from "./tokens";
 
 // The step whose progress was last on screen. Each step draws its own bar, so this is what lets
@@ -33,7 +33,7 @@ export default function ProgressBar({ step, total }: { step: number; total: numb
     >
       {Array.from({ length: total }, (_, i) => (
         <div key={i} className="h-1.5 flex-1 overflow-hidden rounded-full bg-line">
-          <motion.div
+          <m.div
             className="h-full origin-left rounded-full bg-brand"
             initial={{ scaleX: i < from ? 1 : 0 }}
             animate={{ scaleX: i < step ? 1 : 0 }}

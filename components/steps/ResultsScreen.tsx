@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import FadeUp from "@/components/motion/FadeUp";
+import LayoutMotion from "@/components/motion/LayoutMotion";
 import Pop from "@/components/motion/Pop";
 import SelectionHighlight from "@/components/motion/SelectionHighlight";
 import StepCard from "@/components/StepCard";
@@ -49,6 +50,7 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
         {formatDateShort(state.date)} · {origin} → {state.to?.name}
       </p>
 
+      <LayoutMotion>
       <fieldset className="flex flex-col gap-3" aria-busy={busy}>
         <legend className="visually-hidden">Choose a route</legend>
         {state.results.map((route, i) => {
@@ -94,6 +96,7 @@ export default function ResultsScreen({ state, dispatch, onShift, onSend, onRese
           );
         })}
       </fieldset>
+      </LayoutMotion>
 
       <div aria-live="polite" className="flex flex-col gap-3">
         {state.notice ? (

@@ -3,7 +3,7 @@
 // The "checked" icon for a checkbox, with a small celebration when the user ticks it:
 // the box bounces in, the check mark draws itself, and a ring bursts outward and fades.
 // With `animate={false}` it is simply drawn checked (used for boxes that were already ticked).
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { DURATION, EASE_OUT, SPRING } from "./tokens";
 
 export default function CheckDraw({ animate }: { animate: boolean }) {
@@ -11,19 +11,22 @@ export default function CheckDraw({ animate }: { animate: boolean }) {
     <svg data-motion="check-draw" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" style={{ overflow: "visible" }}>
       {/* Ring that bursts outward once. */}
       {animate ? (
-        <motion.circle
+        <m.circle
           cx="12"
           cy="12"
+          r="8"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
-          initial={{ r: 8, opacity: 0.55 }}
-          animate={{ r: 19, opacity: 0 }}
+          // Scale and opacity only: both are handled by the compositor, so the ring never causes layout work.
+          style={{ transformOrigin: "12px 12px", transformBox: "view-box" }}
+          initial={{ scale: 1, opacity: 0.55 }}
+          animate={{ scale: 2.4, opacity: 0 }}
           transition={{ duration: 0.5, ease: EASE_OUT }}
         />
       ) : null}
       {/* The filled box bounces in. */}
-      <motion.rect
+      <m.rect
         x="3"
         y="3"
         width="18"
@@ -36,7 +39,7 @@ export default function CheckDraw({ animate }: { animate: boolean }) {
         transition={SPRING.snap}
       />
       {/* The check mark draws itself from left to right. */}
-      <motion.path
+      <m.path
         d="M7 12.4l3.4 3.4L17.2 8.8"
         fill="none"
         stroke="#fff"

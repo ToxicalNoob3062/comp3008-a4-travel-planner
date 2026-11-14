@@ -2,7 +2,7 @@
 
 // Material UI theme matching the Assignment 3 Figma prototype (OC Transpo red, Inter).
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { MotionConfig } from "motion/react";
+import MotionProvider from "@/components/motion/MotionProvider";
 import PopupTransition from "@/components/motion/PopupTransition";
 import { PRESS_SCALE } from "@/components/motion/tokens";
 
@@ -47,9 +47,8 @@ const theme = createTheme({
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    // reducedMotion="user": people who ask their system for less motion get fades only, with no sliding or bouncing.
-    <MotionConfig reducedMotion="user">
+    <MotionProvider>
       <ThemeProvider theme={theme}>{children}</ThemeProvider>
-    </MotionConfig>
+    </MotionProvider>
   );
 }

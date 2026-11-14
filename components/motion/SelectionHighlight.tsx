@@ -4,12 +4,12 @@
 // old item to the new one instead of jumping, so the eye can follow where the selection went.
 // Put it inside a `relative` item, and render it only for the selected one. Items that share
 // the same `group` name share one highlight.
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import { SPRING } from "./tokens";
 
 export default function SelectionHighlight({ group, className }: { group: string; className: string }) {
   return (
-    <motion.span
+    <m.span
       data-motion="selection"
       aria-hidden="true"
       layoutId={`selection-${group}`}

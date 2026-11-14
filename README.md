@@ -114,6 +114,7 @@ Each one marks its element with a `data-motion` attribute, which makes it easy t
 
 | Component | `data-motion` | What it does | Used for |
 | --- | --- | --- | --- |
+| `MotionProvider`, `LayoutMotion` | none | Load Motion's features (see Performance). | `app/providers.tsx`, the Results screen. |
 | `ScreenTransition` | `screen` | Slides a screen in from the direction of travel (Next from the right, Back from the left) and moves focus to its heading. | Every step change, in `TripPlanner`. |
 | `ProgressBar` | `progress` | Fills the next segment going forward, drains it going back. | The four-step bar in `StepCard`. |
 | `Pop` | `pop` | Rises and settles with one soft bounce, then stays still. | Tips, warnings, errors, the goal sentence, the "Route sent" confirmation. |
@@ -125,6 +126,41 @@ Each one marks its element with a `data-motion` attribute, which makes it easy t
 | `PopupTransition` | none (set in the theme) | Grows out from the centre with a slight overshoot, shrinks away faster. | Every dialog, starting with Route details. |
 | `DropInPaper` | `drop-in` | `DropIn` applied to a Material UI panel. | The place suggestions list. |
 | `.press` (CSS class) and the MUI button theme | none | Presses the control down slightly while it is clicked. | Every button, pill and choice card. |
+
+## Tests
+
+Animation and interaction tests use Vitest and React Testing Library (jsdom). The animations really run in
+the tests, so they check where an element starts, where it ends, and what happens in between.
+
+```bash
+npm test
+```
+
+| Test file | What it checks |
+| --- | --- |
+| `motion/__tests__/Pop.test.tsx` | Starts hidden and small, ends at rest, overshoots once (the bounce), two boxes stay exactly in step, no sliding with reduced motion. |
+| `motion/__tests__/FadeUp.test.tsx` | Start and end positions, `from="left"`, list items arrive in order, `delay`, list-item mode, screen-reader attributes, reduced motion. |
+| `motion/__tests__/ProgressBar.test.tsx` | ARIA values, fills the new segment going forward, drains going back, resets for a new trip, fills gradually. |
+| `motion/__tests__/ScreenTransition.test.tsx` | First screen does not slide or take focus; Next arrives from the right and Back from the left; focus moves to the new heading; one screen at a time. |
+| `motion/__tests__/PopupTransition.test.tsx` | Dialog opens with the shared timing and easing, closes faster, then is removed. |
+| `motion/__tests__/smallEffects.test.tsx` | `ScaleIn`, `DropIn` and `SelectionHighlight` (one highlight, on the selected item only). |
+| `motion/__tests__/tokens.test.ts` | Guard rails on the timing values (leaving is faster than arriving, nothing longer than 0.6 s, and so on). |
+| `__tests__/AnimatedCheckbox.test.tsx` | Pre-checked boxes do not animate, ticking plays the celebration, keyboard works, the tick is hidden from screen readers. |
+| `__tests__/TimeWheel.test.tsx` | Nothing chosen at first, typing one or two digits, arrow/Home/End/Page keys, limits, Backspace, Escape, click, scroll. |
+
+Shared helpers are in `test/motion.tsx` (`renderWithMotion`, `waitUntilSettled`, `timeToVisible`).
+
+## Performance
+
+- **Slim Motion:** the motion components use Motion's lightweight `m` elements, and `motion/MotionProvider` loads only the
+  basic animation features. The layout-animation features needed by `SelectionHighlight` are added by `motion/LayoutMotion`
+  on the Results screen only, so that code downloads with that screen.
+- **Screens load on demand:** every screen after the start screen is a separate download (`components/lazyScreens.tsx`),
+  fetched in the background as soon as the browser is idle, so the first page is smaller and clicks are still instant.
+- **Cheap properties only:** animations change `transform` and `opacity`, which the browser can animate without redoing layout.
+- **Measured on the production build:** scripts for the first page went from 359 KB to 268 KB compressed (1137 KB to 827 KB
+  uncompressed). Every step transition, the search, the recovery and the route details popup ran at about 60 frames per
+  second with no frame longer than 18 ms.
 
 ## Accessibility
 

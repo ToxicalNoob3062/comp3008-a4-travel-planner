@@ -1,16 +1,10 @@
 "use client";
 
 // The planner: owns the state (one reducer), talks to the API, and shows the current screen.
-import { useCallback, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import ScreenTransition from "@/components/motion/ScreenTransition";
-import RouteDetailsDialog from "@/components/RouteDetailsDialog";
-import ResultsScreen from "@/components/steps/ResultsScreen";
-import ReviewStep from "@/components/steps/ReviewStep";
-import ServicesStep from "@/components/steps/ServicesStep";
+import { preloadScreens, ResultsScreen, ReviewStep, RouteDetailsDialog, ServicesStep, TripPreview, WhenStep, WhereStep } from "@/components/lazyScreens";
 import StartScreen from "@/components/steps/StartScreen";
-import TripPreview from "@/components/steps/TripPreview";
-import WhenStep from "@/components/steps/WhenStep";
-import WhereStep from "@/components/steps/WhereStep";
 import { searchRoutes, sendTrip } from "@/lib/api";
 import { shiftLabel, timingNote } from "@/lib/labels";
 import { buildSearchRequest, initialState, plannerReducer, type Screen } from "@/lib/plannerReducer";
@@ -20,6 +14,9 @@ const SCREEN_ORDER: Screen[] = ["start", "where", "when", "services", "review", 
 
 export default function TripPlanner() {
   const [state, dispatch] = useReducer(plannerReducer, initialState);
+
+  // The later screens load in the background while the user reads the start screen.
+  useEffect(() => preloadScreens(), []);
 
   // Which way the user is moving through the steps, so the transition slides the matching way.
   const [shown, setShown] = useState<Screen>(state.screen);

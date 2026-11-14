@@ -3,7 +3,8 @@
 // Slides one screen out and the next one in. Going forward the new screen arrives from the right,
 // going back it arrives from the left, so the motion matches the direction of travel through the steps.
 import { useEffect, useRef, type ReactNode } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 import { DURATION, EASE_OUT, SLIDE_DISTANCE } from "./tokens";
 
 const variants = {
@@ -20,14 +21,23 @@ function Screen({ direction, children }: { direction: number; children: ReactNod
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // Not on the very first load: the page should not grab focus before the user has done anything.
-    if (firstScreenShown) {
-      ref.current?.querySelector<HTMLElement>("[data-screen-heading]")?.focus({ preventScroll: true });
-      window.scrollTo({ top: 0 });
-    }
+    const moveFocus = firstScreenShown;
     firstScreenShown = true;
+    if (!moveFocus) return;
+    window.scrollTo({ top: 0 });
+    // The heading is normally there at once. If the screen's code is still arriving, keep looking for a moment.
+    let tries = 0;
+    let timer: ReturnType<typeof setTimeout>;
+    const focusHeading = () => {
+      const heading = ref.current?.querySelector<HTMLElement>("[data-screen-heading]");
+      if (heading) heading.focus({ preventScroll: true });
+      else if (++tries < 40) timer = setTimeout(focusHeading, 50);
+    };
+    focusHeading();
+    return () => clearTimeout(timer);
   }, []);
   return (
-    <motion.div
+    <m.div
       ref={ref}
       data-motion="screen"
       custom={direction}
@@ -39,7 +49,7 @@ function Screen({ direction, children }: { direction: number; children: ReactNod
       className="flex w-full flex-col items-center"
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 

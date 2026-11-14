@@ -4,11 +4,11 @@
 //   <FadeUp>                      one block rising into place
 //   <FadeUp order={i}>            item i of a staggered list
 //   <FadeUp as="li" from="left">  a list item sliding in from the left
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import type { ReactNode } from "react";
 import { DURATION, EASE_SMOOTH, STAGGER } from "./tokens";
 
-const TAGS = { div: motion.div, li: motion.li } as const;
+const TAGS = { div: m.div, li: m.li } as const;
 const OFFSET = { below: { y: 14 }, left: { x: -10 } } as const;
 
 interface FadeUpProps {
