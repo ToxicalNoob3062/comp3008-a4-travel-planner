@@ -144,7 +144,7 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
             icon={<KeyboardOutlined fontSize="small" />}
             sx={{ py: 0, fontSize: 13 }}
           >
-            Scroll a wheel or click a value. On a keyboard, select a wheel and type the number or use the arrow keys.
+            Click a wheel, then scroll, type the number or use the arrow keys. You can also click a value directly.
           </Alert>
           </Pop>
 

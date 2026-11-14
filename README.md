@@ -34,7 +34,7 @@ Start on the first screen, **Plan a trip**, and press **Start planning**.
 | Step | What to do | What happens |
 | --- | --- | --- |
 | 1. Where | Type `orleans` in **From** and pick **Place d'Orléans Dr**. Type `carl` in **To** and pick **Carleton University**. | Suggestions filter as you type. A map preview appears when both are chosen, and **Next** unlocks. |
-| 2. When | Choose **Arrive by**. Click **Date** and pick October 6, 2026 in the calendar. Scroll the **Hour** wheel to `5` and the **Min** wheel to `30` (or click a value, or use the arrow keys), then press **PM**. | The date and time fields only appear after you choose Arrive by or Leave at. A sentence repeats the goal back. |
+| 2. When | Choose **Arrive by**. Click **Date** and pick October 6, 2026 in the calendar. Click the **Hour** wheel and scroll or type `5`, then the **Min** wheel and `30` (or click a value directly), then press **PM**. | The date and time fields only appear after you choose Arrive by or Leave at. A sentence repeats the goal back. |
 | 3. Services | Leave the recommended services, press **Next**. | Each option is explained in plain language. |
 | 4. Review | Press **Find my routes**. | **Error path:** no stop is within the 10-minute walking limit of Place d'Orléans Dr. |
 | Recovery | Press **Use this stop** (or **Change start location instead**). | The search runs again with every other answer kept, and the results appear. |
@@ -126,6 +126,16 @@ Each one marks its element with a `data-motion` attribute, which makes it easy t
 | `PopupTransition` | none (set in the theme) | Grows out from the centre with a slight overshoot, shrinks away faster. | Every dialog, starting with Route details. |
 | `DropInPaper` | `drop-in` | `DropIn` applied to a Material UI panel. | The place suggestions list. |
 | `.press` (CSS class) and the MUI button theme | none | Presses the control down slightly while it is clicked. | Every button, pill and choice card. |
+
+## Screen sizes
+
+Checked at phone (375 px), tablet (768 px) and desktop widths. No screen scrolls sideways.
+
+- **Phone:** the action buttons stack full width in the same order as on desktop, with the hint above them; the start
+  picture scales and its labels move with it; the date, time and AM/PM pills each take their own row; tap targets are at
+  least 36 px tall.
+- **Time wheels with a mouse:** a wheel scrolls only while it has focus (after a click or Tab). Scrolling the page with
+  the pointer over a wheel therefore cannot change the time by accident. On touch screens the wheel is dragged directly.
 
 ## Tests
 

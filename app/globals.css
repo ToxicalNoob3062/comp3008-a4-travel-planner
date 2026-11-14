@@ -124,3 +124,12 @@ figcaption {
 .press:active {
   transform: scale(0.95);
 }
+
+/* With a mouse, a time wheel scrolls only while it has focus (after a click or Tab). Otherwise the page
+   scrolls as usual, so moving down the page with the pointer over a wheel cannot change the time by accident.
+   Touch screens are not affected: there the wheel is dragged directly, like a phone's own time picker. */
+@media (hover: hover) and (pointer: fine) {
+  .time-wheel:not(:focus) {
+    overflow-y: hidden;
+  }
+}

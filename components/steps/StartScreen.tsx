@@ -26,7 +26,7 @@ export default function StartScreen({ onStart }: { onStart: () => void }) {
             <p className="text-xs font-semibold text-[#212121]">Location A</p>
             <p className="text-[11px] text-[#737373]">Start</p>
           </div>
-          <div className="absolute top-[-2.4%] left-[63%] origin-top-left rounded-lg max-sm:scale-[0.8] bg-white px-2.5 py-1.5 shadow-[0_1px_4px_rgba(0,0,0,0.1)]">
+          <div className="absolute top-[-2.4%] left-[63%] origin-top-left rounded-lg max-sm:left-[54%] max-sm:scale-[0.8] bg-white px-2.5 py-1.5 shadow-[0_1px_4px_rgba(0,0,0,0.1)]">
             <p className="text-xs font-semibold text-[#212121]">Location B</p>
             <p className="text-[11px] text-[#737373]">Destination</p>
           </div>
