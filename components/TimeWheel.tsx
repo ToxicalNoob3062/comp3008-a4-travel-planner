@@ -11,7 +11,12 @@ const VISIBLE = 3; // values shown at once
 const TYPING_PAUSE_MS = 1000; // digits typed within this time are read as one number
 
 interface TimeWheelProps {
+  /** Name read by screen readers, e.g. "Hour". */
   label: string;
+  /** Unit shown beside the chosen value inside the band, e.g. "hour". */
+  unit: string;
+  /** Which end of the shared band this wheel is, so two wheels side by side look like one pill. */
+  side: "left" | "right";
   /** Choices in order. An empty string is the "not chosen yet" position, shown as a dash. */
   options: string[];
   value: string;
@@ -22,7 +27,7 @@ interface TimeWheelProps {
   describedBy?: string;
 }
 
-export default function TimeWheel({ label, options, value, onChange, pageStep = 5, describedBy }: TimeWheelProps) {
+export default function TimeWheel({ label, unit, side, options, value, onChange, pageStep = 5, describedBy }: TimeWheelProps) {
   const listRef = useRef<HTMLDivElement>(null);
   /** The row an animated scroll is heading to, or null when the wheel is not animating. */
   const animatingTo = useRef<number | null>(null);
@@ -129,52 +134,56 @@ export default function TimeWheel({ label, options, value, onChange, pageStep = 
     }
   };
 
-  const labelId = `wheel-${label.toLowerCase()}`;
+  const rounded = side === "left" ? "rounded-l-full" : "rounded-r-full";
   return (
-    <div className="flex flex-col gap-1">
-      <span id={labelId} className="text-xs tracking-[0.15px] text-[rgba(57,56,63,0.6)]">
-        {label}
+    // The wrapper clips the list, which is wider than it, so the scrollbar is never visible in any browser.
+    // `group` lets the band, the chosen value and the unit change colour while the wheel has focus.
+    <div className="group relative w-[104px] overflow-hidden">
+      {/* The band marks the chosen value: grey normally, red while the wheel is focused. */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-x-0 top-10 h-10 border border-[#bdbdc2] bg-[#f2f2f4] transition-colors group-focus-within:border-2 group-focus-within:border-brand group-focus-within:bg-brand-tint ${rounded} ${
+          side === "left" ? "border-r-0 group-focus-within:border-r-2" : "border-l-0 group-focus-within:border-l-2"
+        }`}
+      />
+      {/* The unit stays in the band beside the chosen value, like a phone's timer picker. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute top-10 left-[54px] flex h-10 items-center text-sm font-semibold text-ink group-focus-within:text-brand"
+      >
+        {unit}
       </span>
-      {/* The wrapper clips the list, which is wider than it, so the scrollbar is never visible in any browser.
-          `group` lets the band and the chosen value change colour while the wheel has focus. */}
-      <div className="group relative w-[72px] overflow-hidden rounded-md outline-offset-2 focus-within:outline-3 focus-within:outline-brand">
-        {/* The band marks the chosen value: grey normally, red while the wheel is focused. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-10 h-10 rounded-md border border-[#bdbdc2] bg-[#f2f2f4] transition-colors group-focus-within:border-brand group-focus-within:bg-brand-tint"
-        />
-        <div
-          ref={listRef}
-          role="spinbutton"
-          tabIndex={0}
-          aria-labelledby={labelId}
-          aria-describedby={describedBy}
-          aria-valuemin={Number(options.find((o) => o !== "") ?? 0)}
-          aria-valuemax={Number(options[options.length - 1])}
-          aria-valuenow={value === "" ? undefined : Number(value)}
-          aria-valuetext={value === "" ? "Not chosen" : value}
-          onScroll={onScroll}
-          onKeyDown={onKeyDown}
-          // A wheel, touch or drag by the user takes over from any animated scroll.
-          onWheel={stopAnimating}
-          onTouchStart={stopAnimating}
-          className="time-wheel relative w-[calc(100%+32px)] snap-y snap-mandatory overflow-y-scroll pr-8 outline-none"
-          style={{ height: ROW * VISIBLE, paddingBlock: ROW }}
-        >
-          {options.map((option, i) => (
-            <div
-              key={option}
-              aria-hidden="true"
-              onClick={() => select(i)}
-              className={`flex cursor-pointer snap-center items-center justify-center text-lg tabular-nums select-none ${
-                i === index ? "font-semibold text-ink group-focus-within:text-brand" : "text-[rgba(57,56,63,0.55)] hover:text-ink"
-              }`}
-              style={{ height: ROW }}
-            >
-              {option === "" ? "– –" : option}
-            </div>
-          ))}
-        </div>
+      <div
+        ref={listRef}
+        role="spinbutton"
+        tabIndex={0}
+        aria-label={label}
+        aria-describedby={describedBy}
+        aria-valuemin={Number(options.find((o) => o !== "") ?? 0)}
+        aria-valuemax={Number(options[options.length - 1])}
+        aria-valuenow={value === "" ? undefined : Number(value)}
+        aria-valuetext={value === "" ? "Not chosen" : value}
+        onScroll={onScroll}
+        onKeyDown={onKeyDown}
+        // A wheel, touch or drag by the user takes over from any animated scroll.
+        onWheel={stopAnimating}
+        onTouchStart={stopAnimating}
+        className="time-wheel relative w-[calc(100%+32px)] snap-y snap-mandatory overflow-y-scroll pr-8 outline-none"
+        style={{ height: ROW * VISIBLE, paddingBlock: ROW }}
+      >
+        {options.map((option, i) => (
+          <div
+            key={option}
+            aria-hidden="true"
+            onClick={() => select(i)}
+            className={`flex cursor-pointer snap-center items-center justify-end pr-[58px] text-lg tabular-nums select-none ${
+              i === index ? "font-semibold text-ink group-focus-within:text-brand" : "text-[rgba(57,56,63,0.55)] hover:text-ink"
+            }`}
+            style={{ height: ROW }}
+          >
+            {option === "" ? "– –" : option}
+          </div>
+        ))}
       </div>
     </div>
   );

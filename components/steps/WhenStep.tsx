@@ -94,18 +94,18 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
 
       {mode ? (
         <>
-          <div className="flex flex-wrap items-start gap-x-5 gap-y-4">
+          <div className="flex flex-wrap items-start justify-between gap-x-5 gap-y-4">
             <DateField
               label="Date"
-              className="min-w-[220px] flex-1 max-sm:basis-full sm:mt-[50px]"
+              className="w-[210px] max-sm:w-full sm:mt-[26px]"
               value={date}
               onChange={(value) => dispatch({ type: "SET_FIELD", field: "date", value })}
             />
-            <div role="group" aria-label="Time" className="flex items-start gap-3">
-              <TimeWheel describedBy="time-hint" label="Hour" options={HOURS} value={hour} pageStep={3} onChange={(value) => dispatch({ type: "SET_FIELD", field: "hour", value })} />
-              <TimeWheel describedBy="time-hint" label="Min" options={MINUTES} value={minute} onChange={(value) => dispatch({ type: "SET_FIELD", field: "minute", value })} />
+            <div role="group" aria-label="Time" className="flex items-start">
+              <TimeWheel describedBy="time-hint" label="Hour" unit="hour" side="left" options={HOURS} value={hour} pageStep={3} onChange={(value) => dispatch({ type: "SET_FIELD", field: "hour", value })} />
+              <TimeWheel describedBy="time-hint" label="Minute" unit="min" side="right" options={MINUTES} value={minute} onChange={(value) => dispatch({ type: "SET_FIELD", field: "minute", value })} />
             </div>
-            <div role="group" aria-label="AM or PM" className="flex gap-3 pt-[58px]">
+            <div role="group" aria-label="AM or PM" className="flex gap-3 sm:pt-[42px]">
               {(["AM", "PM"] as Meridiem[]).map((value) => (
                 <Button
                   key={value}
