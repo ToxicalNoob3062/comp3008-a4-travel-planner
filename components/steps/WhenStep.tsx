@@ -6,14 +6,15 @@ import type { Dispatch } from "react";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import AccessTime from "@mui/icons-material/AccessTime";
 import CheckCircle from "@mui/icons-material/CheckCircle";
 import Flag from "@mui/icons-material/Flag";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import RadioButtonUnchecked from "@mui/icons-material/RadioButtonUnchecked";
+import DateField from "@/components/DateField";
 import StepActions from "@/components/StepActions";
 import StepCard from "@/components/StepCard";
+import TimeWheel from "@/components/TimeWheel";
 import { isWhenComplete, requestedTime, type Action, type PlannerState } from "@/lib/plannerReducer";
 import { format24, formatDate, formatTime, isValidDate } from "@/lib/time";
 import type { Meridiem, TimeMode } from "@/lib/types";
@@ -23,19 +24,19 @@ const CHOICES: { mode: TimeMode; title: string; text: string; Icon: typeof Flag 
   { mode: "leave", title: "Leave at", text: "Start out at a set time", Icon: AccessTime },
 ];
 
-const digits = (value: string) => value.replace(/\D/g, "").slice(0, 2);
+// "" is the wheel's starting position: nothing is chosen for the user.
+const HOURS = ["", ...Array.from({ length: 12 }, (_, i) => String(i + 1))];
+const MINUTES = ["", ...Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"))];
 
 export default function WhenStep({ state, dispatch }: { state: PlannerState; dispatch: Dispatch<Action> }) {
   const { mode, date, hour, minute, meridiem } = state;
   const time = requestedTime(state);
   const complete = isWhenComplete(state);
-  const hourInvalid = hour !== "" && (Number(hour) < 1 || Number(hour) > 12);
-  const minuteInvalid = minute !== "" && Number(minute) > 59;
 
   let hint = "Choose Arrive by or Leave at to continue.";
   if (mode) {
     if (!isValidDate(date)) hint = "Choose a date to continue.";
-    else if (hour === "" || minute === "" || hourInvalid || minuteInvalid) hint = "Enter the hour and minutes to continue.";
+    else if (hour === "" || minute === "") hint = "Scroll to the hour and minutes to continue.";
     else if (!meridiem) hint = "Choose AM or PM to continue.";
   }
 
@@ -93,40 +94,18 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
 
       {mode ? (
         <>
-          <div className="flex flex-wrap items-start gap-4">
-            <TextField
+          <div className="flex flex-wrap items-start gap-x-5 gap-y-4">
+            <DateField
               label="Date"
-              type="date"
-              variant="standard"
-              className="min-w-[180px] flex-1"
+              className="min-w-[220px] flex-1 max-sm:basis-full sm:mt-[50px]"
               value={date}
-              onChange={(event) => dispatch({ type: "SET_FIELD", field: "date", value: event.target.value })}
-              helperText=" "
-              slotProps={{ inputLabel: { shrink: true } }}
+              onChange={(value) => dispatch({ type: "SET_FIELD", field: "date", value })}
             />
-            <TextField
-              label="Hour"
-              variant="standard"
-              className="w-20"
-              placeholder="1–12"
-              value={hour}
-              onChange={(event) => dispatch({ type: "SET_FIELD", field: "hour", value: digits(event.target.value) })}
-              error={hourInvalid}
-              helperText={hourInvalid ? "Use 1 to 12" : " "}
-              slotProps={{ inputLabel: { shrink: true }, htmlInput: { inputMode: "numeric", maxLength: 2 } }}
-            />
-            <TextField
-              label="Min"
-              variant="standard"
-              className="w-20"
-              placeholder="00–59"
-              value={minute}
-              onChange={(event) => dispatch({ type: "SET_FIELD", field: "minute", value: digits(event.target.value) })}
-              error={minuteInvalid}
-              helperText={minuteInvalid ? "Use 0 to 59" : " "}
-              slotProps={{ inputLabel: { shrink: true }, htmlInput: { inputMode: "numeric", maxLength: 2 } }}
-            />
-            <div role="group" aria-label="AM or PM" className="flex gap-3 pt-2.5">
+            <div role="group" aria-label="Time" className="flex items-start gap-3">
+              <TimeWheel label="Hour" options={HOURS} value={hour} pageStep={3} onChange={(value) => dispatch({ type: "SET_FIELD", field: "hour", value })} />
+              <TimeWheel label="Min" options={MINUTES} value={minute} onChange={(value) => dispatch({ type: "SET_FIELD", field: "minute", value })} />
+            </div>
+            <div role="group" aria-label="AM or PM" className="flex gap-3 pt-[58px]">
               {(["AM", "PM"] as Meridiem[]).map((value) => (
                 <Button
                   key={value}
