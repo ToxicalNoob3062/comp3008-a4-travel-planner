@@ -19,7 +19,6 @@ interface TimeWheelProps {
 
 export default function TimeWheel({ label, options, value, onChange, pageStep = 5 }: TimeWheelProps) {
   const listRef = useRef<HTMLDivElement>(null);
-  const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
   const index = Math.max(0, options.indexOf(value));
 
   // Keep the wheel lined up with the value (for example after an earlier/later search changes the time).
@@ -28,26 +27,20 @@ export default function TimeWheel({ label, options, value, onChange, pageStep = 
     if (list && Math.round(list.scrollTop / ROW) !== index) list.scrollTop = index * ROW;
   }, [index]);
 
-  useEffect(() => () => {
-    if (settle.current) clearTimeout(settle.current);
-  }, []);
-
-  const select = (next: number, smooth = true) => {
+  // Click or key press: jump straight to the value, with no animation to wait for.
+  const select = (next: number) => {
     const clamped = Math.min(options.length - 1, Math.max(0, next));
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    listRef.current?.scrollTo({ top: clamped * ROW, behavior: smooth && !reduceMotion ? "smooth" : "auto" });
+    if (listRef.current) listRef.current.scrollTop = clamped * ROW;
     if (options[clamped] !== value) onChange(options[clamped]);
   };
 
-  // When scrolling stops, the value sitting in the middle band becomes the choice.
+  // Scrolling: the value in the middle band is the choice straight away, without waiting for the wheel
+  // to stop. (Waiting left Next locked for a moment, so a quick click on it did nothing.)
   const onScroll = () => {
-    if (settle.current) clearTimeout(settle.current);
-    settle.current = setTimeout(() => {
-      const list = listRef.current;
-      if (!list) return;
-      const next = Math.min(options.length - 1, Math.max(0, Math.round(list.scrollTop / ROW)));
-      if (options[next] !== value) onChange(options[next]);
-    }, 120);
+    const list = listRef.current;
+    if (!list) return;
+    const next = Math.min(options.length - 1, Math.max(0, Math.round(list.scrollTop / ROW)));
+    if (options[next] !== value) onChange(options[next]);
   };
 
   const onKeyDown = (event: React.KeyboardEvent) => {
@@ -61,7 +54,7 @@ export default function TimeWheel({ label, options, value, onChange, pageStep = 
     };
     if (event.key in moves) {
       event.preventDefault();
-      select(moves[event.key], false);
+      select(moves[event.key]);
     }
   };
 

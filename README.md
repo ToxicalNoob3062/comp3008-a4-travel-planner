@@ -33,7 +33,7 @@ Start on the first screen, **Plan a trip**, and press **Start planning**.
 
 | Step | What to do | What happens |
 | --- | --- | --- |
-| 1. Where | Type `orleans` in **From** and pick **Place d'Orléans Dr**. Type `carl` in **To** and pick **Carleton University**. | Suggestions load as you type. A map preview appears when both are chosen, and **Next** unlocks. |
+| 1. Where | Type `orleans` in **From** and pick **Place d'Orléans Dr**. Type `carl` in **To** and pick **Carleton University**. | Suggestions filter as you type. A map preview appears when both are chosen, and **Next** unlocks. |
 | 2. When | Choose **Arrive by**. Click **Date** and pick October 6, 2026 in the calendar. Scroll the **Hour** wheel to `5` and the **Min** wheel to `30` (or click a value, or use the arrow keys), then press **PM**. | The date and time fields only appear after you choose Arrive by or Leave at. A sentence repeats the goal back. |
 | 3. Services | Leave the recommended services, press **Next**. | Each option is explained in plain language. |
 | 4. Review | Press **Find my routes**. | **Error path:** no stop is within the 10-minute walking limit of Place d'Orléans Dr. |
@@ -75,7 +75,7 @@ To reset the data, stop the app and delete `data/planner.db`.
 | Screens (view) | `components/steps/StartScreen`, `WhereStep`, `WhenStep`, `ServicesStep`, `ReviewStep`, `ResultsScreen`, `TripPreview`; `components/RouteDetailsDialog`, `SearchErrorPanel`, `PlaceField`, `DateField`, `TimeWheel`, `Timeline`, `StepCard`, `StepActions`, `map/MapView`, `map/TripMap` | Show the current state and report user actions. |
 | Application logic | `components/TripPlanner.tsx` | Holds the state, decides which screen to show, calls the API (`runSearch`, `acceptSuggestedStop`, `addService`, `shiftTime`, `sendSelected`), moves focus when the screen changes. |
 | State | `lib/plannerReducer.ts` | `PlannerState`, every `Action`, the reducer, and the checks that unlock Next (`isWhereComplete`, `isWhenComplete`, `isServicesComplete`, `buildSearchRequest`). |
-| API client | `lib/api.ts` | `fetchPlaces`, `searchRoutes`, `sendTrip`: browser calls to the API routes, with network failures turned into messages. |
+| API client | `lib/api.ts` | `fetchPlaces` (loads the place list once, then `filterPlaces` filters it in the browser), `searchRoutes`, `sendTrip`: browser calls to the API routes, with network failures turned into messages. |
 | API routes | `app/api/places/route.ts` (GET), `app/api/routes/route.ts` (POST), `app/api/trips/route.ts` (POST) | Validate the request and return JSON. |
 | Services | `lib/routing.ts` | The mock trip search: walking-limit check, route finding, picking the trip closest to the requested time. |
 | Storage | `lib/db.ts`, `lib/seed.ts`, `data/planner.db` | SQLite tables `places`, `lines`, `line_stops`, `event_dates`, `saved_trips`. |

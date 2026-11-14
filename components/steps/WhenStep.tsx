@@ -119,8 +119,9 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
             </div>
           </div>
 
-          {/* The system repeats the goal back in plain words so a wrong setting is noticed here. */}
-          <div aria-live="polite">
+          {/* The system repeats the goal back in plain words so a wrong setting is noticed here.
+              Its space is reserved so the buttons below do not move when it appears. */}
+          <div aria-live="polite" className="min-h-[78px]">
             {complete && time !== null ? (
               <Alert severity="info" icon={<InfoOutlined color="primary" />} sx={{ bgcolor: "#f5f5f5", color: "text.primary" }}>
                 <AlertTitle sx={{ fontWeight: 500, mb: 0.5 }}>

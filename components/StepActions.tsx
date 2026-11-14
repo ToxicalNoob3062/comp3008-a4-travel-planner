@@ -23,7 +23,7 @@ export default function StepActions({ onBack, onNext, nextDisabled, hint, editin
         Back
       </Button>
       <div className="flex flex-wrap items-center justify-end gap-3">
-        <p id="next-hint" aria-live="polite" className="text-[13px] text-muted">
+        <p id="next-hint" aria-live="polite" className="min-h-5 text-[13px] text-muted max-sm:basis-full max-sm:text-right">
           {nextDisabled ? hint : ""}
         </p>
         {extra}

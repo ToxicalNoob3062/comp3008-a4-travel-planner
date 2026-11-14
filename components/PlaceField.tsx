@@ -1,11 +1,12 @@
 "use client";
 
-// Text field with place suggestions loaded from GET /api/places as the user types.
+// Text field with place suggestions. The list of places is loaded once from GET /api/places
+// and filtered in the browser as the user types, so suggestions appear without a network wait.
 import { useEffect, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
-import { fetchPlaces } from "@/lib/api";
+import { fetchPlaces, filterPlaces } from "@/lib/api";
 import type { Place } from "@/lib/types";
 
 interface PlaceFieldProps {
@@ -16,29 +17,25 @@ interface PlaceFieldProps {
 }
 
 export default function PlaceField({ label, value, onChange, error }: PlaceFieldProps) {
-  const [input, setInput] = useState(value?.name ?? "");
-  const [options, setOptions] = useState<Place[]>([]);
+  const [places, setPlaces] = useState<Place[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "failed">("loading");
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    const controller = new AbortController();
-    // Once a place is chosen the box shows its name; list every place again so it is easy to change.
-    const query = value && input === value.name ? "" : input;
-    const timer = setTimeout(() => {
-      fetchPlaces(query, controller.signal)
-        .then((places) => {
-          setOptions(places);
-          setStatus("ready");
-        })
-        .catch((reason: unknown) => {
-          if ((reason as Error).name !== "AbortError") setStatus("failed");
-        });
-    }, 150);
+    let active = true;
+    fetchPlaces()
+      .then((list) => {
+        if (!active) return;
+        setPlaces(list);
+        setStatus("ready");
+      })
+      .catch(() => {
+        if (active) setStatus("failed");
+      });
     return () => {
-      clearTimeout(timer);
-      controller.abort();
+      active = false;
     };
-  }, [input, value]);
+  }, [attempt]);
 
   const failed = status === "failed";
   return (
@@ -46,18 +43,21 @@ export default function PlaceField({ label, value, onChange, error }: PlaceField
       fullWidth
       autoHighlight
       openOnFocus
-      options={options}
+      options={places}
       value={value}
-      inputValue={input}
       loading={status === "loading"}
-      filterOptions={(all) => all}
+      // Once a place is chosen the box shows its name; list every place again so it is easy to change.
+      filterOptions={(all, { inputValue }) => filterPlaces(all, value && inputValue === value.name ? "" : inputValue)}
       getOptionLabel={(place) => place.name}
       isOptionEqualToValue={(a, b) => a.id === b.id}
       noOptionsText={failed ? "Places could not be loaded." : "No matching place. Try a station, street or landmark."}
       onChange={(_, place) => onChange(place)}
-      onInputChange={(_, text) => {
-        setStatus("loading");
-        setInput(text);
+      onOpen={() => {
+        // A failed load is tried again the next time the list opens.
+        if (failed) {
+          setStatus("loading");
+          setAttempt((n) => n + 1);
+        }
       }}
       renderOption={({ key, ...props }, place) => (
         <li key={key} {...props}>
@@ -74,7 +74,7 @@ export default function PlaceField({ label, value, onChange, error }: PlaceField
           variant="standard"
           placeholder="Type a station, street or place"
           error={!!error || failed}
-          helperText={error ?? (failed ? "We couldn't load places. Check your connection and type again." : " ")}
+          helperText={error ?? (failed ? "We couldn't load places. Check your connection and open the list again." : " ")}
           slotProps={{
             ...params.slotProps,
             input: {

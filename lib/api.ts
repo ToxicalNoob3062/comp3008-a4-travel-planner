@@ -2,10 +2,32 @@
 // failures into a value the UI can show, so the components never have to catch.
 import type { Itinerary, Place, SearchRequest, SearchResponse, TimeMode } from "./types";
 
-export async function fetchPlaces(query: string, signal?: AbortSignal): Promise<Place[]> {
-  const response = await fetch(`/api/places?q=${encodeURIComponent(query)}`, { signal });
-  if (!response.ok) throw new Error("Could not load places");
-  return ((await response.json()) as { places: Place[] }).places;
+let placesRequest: Promise<Place[]> | null = null;
+
+/** Loads every place once (GET /api/places) and reuses the list for the rest of the visit. */
+export function fetchPlaces(): Promise<Place[]> {
+  placesRequest ??= fetch("/api/places")
+    .then((response) => {
+      if (!response.ok) throw new Error("Could not load places");
+      return response.json() as Promise<{ places: Place[] }>;
+    })
+    .then((body) => body.places)
+    .catch((error: unknown) => {
+      placesRequest = null; // let the next attempt try again
+      throw error;
+    });
+  return placesRequest;
+}
+
+/** Removes accents and case so "orleans" matches "Orléans". */
+function normalise(text: string): string {
+  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
+/** Places whose name or description contains the typed text. */
+export function filterPlaces(places: Place[], query: string): Place[] {
+  const q = normalise(query);
+  return q === "" ? places : places.filter((place) => normalise(`${place.name} ${place.subtitle}`).includes(q));
 }
 
 export async function searchRoutes(request: SearchRequest): Promise<SearchResponse> {
