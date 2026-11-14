@@ -1,7 +1,7 @@
 "use client";
 
 // Leaflet map (OpenStreetMap tiles). Loaded only in the browser through MapView.
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import L from "leaflet";
 import { MapContainer, Marker, Polyline, TileLayer, Tooltip, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -16,6 +16,8 @@ export interface MapMarker {
 export interface MapLine {
   path: [number, number][];
   kind: "walk" | "bus" | "train";
+  /** Shown on the map beside the line, e.g. "Walk 12 min". Used for walks, which are too short to spot. */
+  label?: string;
 }
 
 const LINE_STYLE: Record<MapLine["kind"], L.PathOptions> = {
@@ -52,8 +54,19 @@ export default function TripMap({ markers, lines = [] }: { markers: MapMarker[];
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {lines.map((line, i) => (
-        <Polyline key={i} positions={line.path} pathOptions={LINE_STYLE[line.kind]} />
+      {/* Walks are drawn last so they sit on top, with a white outline and a label that is always visible:
+          a 10-minute walk is only a few pixels long at city zoom and would otherwise hide under the pins. */}
+      {[...lines.filter((l) => l.kind !== "walk"), ...lines.filter((l) => l.kind === "walk")].map((line, i) => (
+        <Fragment key={i}>
+          {line.kind === "walk" ? <Polyline positions={line.path} pathOptions={{ color: "#ffffff", weight: 8 }} /> : null}
+          <Polyline positions={line.path} pathOptions={LINE_STYLE[line.kind]}>
+            {line.label ? (
+              <Tooltip permanent direction="top" offset={[0, -6]} className="map-walk-label">
+                {line.label}
+              </Tooltip>
+            ) : null}
+          </Polyline>
+        </Fragment>
       ))}
       {markers.map((marker, i) => (
         <Marker key={i} position={marker.position} icon={pin(marker)} alt={marker.label} title={marker.label}>

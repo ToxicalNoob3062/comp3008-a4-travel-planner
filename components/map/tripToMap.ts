@@ -3,10 +3,11 @@ import type { Itinerary, Place } from "@/lib/types";
 import type { MapLine, MapMarker } from "./TripMap";
 
 export function itineraryToMap(itinerary: Itinerary, from: Place, to: Place): { markers: MapMarker[]; lines: MapLine[] } {
-  const lines: MapLine[] = itinerary.legs.map((leg) => ({
-    path: leg.path,
-    kind: leg.type === "walk" ? "walk" : leg.vehicle,
-  }));
+  const lines: MapLine[] = itinerary.legs.map((leg) =>
+    leg.type === "walk"
+      ? { path: leg.path, kind: "walk", label: `Walk ${leg.minutes} min` }
+      : { path: leg.path, kind: leg.vehicle },
+  );
   // A small marker at every stop where the rider boards.
   const stops: MapMarker[] = itinerary.legs
     .filter((leg) => leg.type === "ride")

@@ -89,3 +89,17 @@ body {
 .time-wheel::-webkit-scrollbar {
   display: none;
 }
+
+/* "Walk 12 min" label on the map. */
+.map-walk-label {
+  padding: 2px 8px;
+  border: 1px solid #39383f;
+  border-radius: 999px;
+  background: #fff;
+  color: #39383f;
+  font: 600 12px/1.4 var(--font-inter), sans-serif;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+.map-walk-label::before {
+  border-top-color: #39383f;
+}
