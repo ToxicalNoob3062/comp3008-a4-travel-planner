@@ -141,6 +141,7 @@ Shared helpers are in `test/motion.tsx` (`renderWithMotion`, `waitUntilSettled`,
 - Colour is never the only signal (selected items also have a check mark, a radio dot or a label).
 - A tip that fades out is also removed from screen readers and the tab order (`aria-hidden`, `inert`); the wheel instructions
   stay available to screen readers in hidden text. The countdown pauses while the pointer or focus is on the tip.
+- The logo in the top bar is a link named "OC Transpo Travel Planner: start a new trip". It works from the keyboard and returns to the first screen.
 - Short labels on a phone ("Explore", "Preview", "Send", the pencil) keep their full names for screen readers.
 - Animations are reduced when the system asks for reduced motion: sliding and bouncing are switched off and only fades remain
   (`MotionConfig reducedMotion="user"` in `app/providers.tsx`).

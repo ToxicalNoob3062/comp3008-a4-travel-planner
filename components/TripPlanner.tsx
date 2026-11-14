@@ -2,6 +2,7 @@
 
 // The planner: owns the state (one reducer), talks to the API, and shows the current screen.
 import { useCallback, useEffect, useReducer, useState } from "react";
+import { RESTART_EVENT } from "@/components/AppBar";
 import ScreenTransition from "@/components/motion/ScreenTransition";
 import { preloadScreens, ResultsScreen, ReviewStep, RouteDetailsDialog, ServicesStep, TripPreview, WhenStep, WhereStep } from "@/components/lazyScreens";
 import StartScreen from "@/components/steps/StartScreen";
@@ -17,6 +18,13 @@ export default function TripPlanner() {
 
   // The later screens load in the background while the user reads the start screen.
   useEffect(() => preloadScreens(), []);
+
+  // The logo in the top bar starts the planner again from the first screen.
+  useEffect(() => {
+    const restart = () => dispatch({ type: "RESET" });
+    window.addEventListener(RESTART_EVENT, restart);
+    return () => window.removeEventListener(RESTART_EVENT, restart);
+  }, []);
 
   // Which way the user is moving through the steps, so the transition slides the matching way.
   const [shown, setShown] = useState<Screen>(state.screen);

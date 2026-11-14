@@ -58,6 +58,7 @@ Other things to try:
 - Start from *Les Promenades Gatineau* with *STO buses* unchecked: the fix suggests adding STO.
 - Destination *Hog's Back Park*: the same walking-limit error, this time for the destination.
 - **Leave at** instead of Arrive by.
+- The **OC Transpo logo** in the top bar clears the planner and returns to the first screen, from any step.
 
 ## Demo data
 
