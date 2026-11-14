@@ -139,14 +139,17 @@ export default function WhenStep({ state, dispatch }: { state: PlannerState; dis
             </div>
           </div>
 
+          {/* Pops in just after the controls above it have risen into place. */}
+          <Pop className="-mt-3" delay={0.25}>
           <Alert
             id="time-hint"
             severity="info"
             icon={<KeyboardOutlined fontSize="small" />}
-            sx={{ mt: -1.5, py: 0, alignItems: "center", fontSize: 13 }}
+            sx={{ py: 0, alignItems: "center", fontSize: 13 }}
           >
             Scroll a wheel or click a value. On a keyboard, select a wheel and type the number or use the arrow keys.
           </Alert>
+          </Pop>
 
           {/* The system repeats the goal back in plain words so a wrong setting is noticed here.
               Its space is reserved so the buttons below do not move when it appears. */}
