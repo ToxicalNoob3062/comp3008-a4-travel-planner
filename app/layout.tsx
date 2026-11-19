@@ -8,7 +8,7 @@ import "./globals.css";
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Travel Planner | OC Transpo (COMP 3008 prototype)",
+  title: "Travel Planner",
   description: "A guided, step-by-step trip planner. Student project for COMP 3008, not an official OC Transpo site.",
 };
 
